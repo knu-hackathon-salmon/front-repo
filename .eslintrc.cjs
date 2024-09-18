@@ -15,7 +15,7 @@ module.exports = {
         project: true,
         tsconfigRootDir: __dirname,
     },
-    plugins: ["react-refresh"],
+    plugins: ["react-refresh", "@typescript-eslint"],
 
     rules: {
         "@typescript-eslint/no-explicit-any": "off",

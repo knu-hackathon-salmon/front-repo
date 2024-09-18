@@ -1,36 +1,35 @@
 {
-  "arrowParens": "always",
-  "bracketSpacing": true,
+    "arrowParens": "always",
+    "bracketSpacing": true,
 
-  "jsxBracketSameLine": false,
-  "jsxSingleQuote": false,
-  "singleQuote": false,
+    "jsxBracketSameLine": false,
+    "jsxSingleQuote": false,
+    "singleQuote": false,
 
-  "quoteProps": "as-needed",
+    "quoteProps": "as-needed",
 
-  "printWidth": 120,
-  "tabWidth": 4,
+    "printWidth": 120,
+    "tabWidth": 4,
 
-  "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrder": [
-      "^react",
-      "<THIRD_PARTY_MODULES>",
+    "plugins": ["@trivago/prettier-plugin-sort-imports"],
+    "importOrder": [
+        "^react",
+        "<THIRD_PARTY_MODULES>",
 
-      "^(@/common)(.*)$",
-      "^(@/components)(.*)$",
-      "^(@/pages)(.*)$",
+        "^(@/common)(.*)$",
+        "^(@/components)(.*)$",
+        "^(@/pages)(.*)$",
 
-      "^(@/hooks)(.*)$",
-      "^(@/services)(.*)$",
+        "^(@/api)(.*)$",
 
-      "^(@/assets)(.*)$",
-      "^(@/constants)(.*)$",
-      "^(@/config)(.*)$",
-      "^(@/utils)(.*)$",
-      "^(@/styles)(.*)$",
+        "^(@/assets)(.*)$",
+        "^(@/constants)(.*)$",
+        "^(@/config)(.*)$",
+        "^(@/utils)(.*)$",
+        "^(@/styles)(.*)$",
 
-      "^(.*)/(.*)$"
-  ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": false
+        "^(.*)/(.*)$"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": false
 }

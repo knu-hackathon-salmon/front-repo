@@ -4,7 +4,6 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App.tsx";
 import { queryClient } from "./api/instance/index.ts";
-import "./index.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 
