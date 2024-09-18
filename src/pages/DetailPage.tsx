@@ -1,9 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 import styled from "styled-components";
 
 import { BackBtn } from "@/components/common/BackBtn";
 import { Text } from "@/components/common/Text";
 
 export default function DetailPage() {
+    const navigate = useNavigate();
     return (
         <>
             <DetailHeader>
@@ -37,7 +40,13 @@ export default function DetailPage() {
                     </Text>
                 </InfoWrapper>
             </Wrapper>
-            <ChatBtn>채팅하기</ChatBtn>
+            <ChatBtn
+                onClick={() => {
+                    navigate("/chat");
+                }}
+            >
+                채팅하기
+            </ChatBtn>
         </>
     );
 }
@@ -65,19 +74,20 @@ const Title = styled.div`
 const ChatBtn = styled.button`
     width: 180px;
     padding: 10px 0px;
-    border: 1px solid black;
+    border: 1px solid #1ca673;
     border-radius: 20px;
     background: none;
 
     font-size: 14px;
-    font-weight: bold;
+    font-weight: bolder;
+    color: #1ca673;
     cursor: pointer;
 
     position: fixed;
     bottom: 90px;
 
     &:hover {
-        background-color: black;
+        background-color: #1ca673;
         color: white;
         transition: 0.3s;
     }

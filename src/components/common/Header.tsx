@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const HEADER_HEIGHT = 68;
 
 export default function Header() {
-    return <Head>LOGO</Head>;
+    return <Head>푸나바다</Head>;
 }
 const Head = styled.header`
     width: min(100%, 700px);
@@ -17,7 +17,8 @@ const Head = styled.header`
 
     height: ${HEADER_HEIGHT}px;
 
-    color: rgb(85, 26, 139);
-    font-weight: bold;
+    color: #1ca673;
+    background-color: white;
+    font-weight: bolder;
     z-index: 1000;
 `;
