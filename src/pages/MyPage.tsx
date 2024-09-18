@@ -1,3 +1,3 @@
 export default function MyPage() {
-    return <></>;
-  }
+    return <div>a</div>;
+}

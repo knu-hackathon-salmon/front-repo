@@ -1,22 +1,23 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const HEADER_HEIGHT = 68;
 
 export default function Header() {
-  return <Head>LOGO</Head>;
+    return <Head>LOGO</Head>;
 }
 const Head = styled.header`
-  width: min(100%, 700px);
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+    width: min(100%, 700px);
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
 
-  text-align: center;
-  align-content: center;
+    text-align: center;
+    align-content: center;
 
-  height: ${HEADER_HEIGHT}px;
+    height: ${HEADER_HEIGHT}px;
 
-  background-color: #d9d9d9;
-  z-index: 1000;
+    color: rgb(85, 26, 139);
+    font-weight: bold;
+    z-index: 1000;
 `;

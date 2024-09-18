@@ -1,3 +1,10 @@
+import { Map } from "@/components/features/Map";
+
 export default function MapPage() {
-    return <></>;
-  }
+    return (
+        <>
+            <Map />
+            {/* <FoodList /> */}
+        </>
+    );
+}
