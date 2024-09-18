@@ -1,3 +1,3 @@
 export default function SettingPage() {
-    return <></>;
-  }
+    return <div>a</div>;
+}

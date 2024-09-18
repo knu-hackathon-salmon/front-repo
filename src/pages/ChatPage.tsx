@@ -1,3 +1,3 @@
 export default function ChatPage() {
-  return <></>;
+    return <div>a</div>;
 }
