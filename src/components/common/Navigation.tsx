@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { FaRegUser } from "react-icons/fa6";
 import { PiHouseBold } from "react-icons/pi";
 import { RiMapPinLine } from "react-icons/ri";
-import { Link, LinkProps, useLocation } from "react-router-dom";
+import { Link, LinkProps } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -10,27 +11,27 @@ interface NavLinkProps extends LinkProps {
 }
 
 export default function Navigation() {
-    const location = useLocation();
+    const [activeNav, setActiveNav] = useState("/");
 
-    const isHomeActive = location.pathname === "/";
-    const isPathActive = (basePath: string) => location.pathname.startsWith(basePath);
-
+    const handleNavClick = (path: string) => {
+        setActiveNav(path);
+    };
     return (
         <Nav>
             <NavItem>
-                <NavLink to="/" isActive={isHomeActive}>
+                <NavLink to="/" isActive={activeNav === "/"} onClick={() => handleNavClick("/")}>
                     <PiHouseBold size={22} />
                     Home
                 </NavLink>
             </NavItem>
             <NavItem>
-                <NavLink to="/map" isActive={isPathActive("/map")}>
+                <NavLink to="/map" isActive={activeNav === "/map"} onClick={() => handleNavClick("/map")}>
                     <RiMapPinLine size={22} />
                     Map
                 </NavLink>
             </NavItem>
             <NavItem>
-                <NavLink to="/my" isActive={isPathActive("/my")}>
+                <NavLink to="/my" isActive={activeNav === "/my"} onClick={() => handleNavClick("/my")}>
                     <FaRegUser size={22} />
                     MyPage
                 </NavLink>
