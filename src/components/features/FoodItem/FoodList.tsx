@@ -1,6 +1,12 @@
 import { FoodItem, Item } from ".";
 import styled from "styled-components";
 
+import { FoodItemH } from "./FoodItemH";
+
+interface Props {
+    isH: boolean;
+}
+
 const items: Item[] = [
     {
         id: 1,
@@ -52,21 +58,23 @@ const items: Item[] = [
     },
 ];
 
-export function FoodList() {
+export function FoodList({ isH }: { isH: boolean }) {
     return (
-        <Wrapper>
+        <Wrapper isH={isH}>
             {items.map((item) => {
-                return <FoodItem key={item.id} item={item} />;
+                return isH ? <FoodItemH key={item.id} item={item} /> : <FoodItem key={item.id} item={item} />;
             })}
         </Wrapper>
     );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<Props>`
     display: flex;
     gap: 10px;
     overflow: hidden;
+    flex-direction: ${({ isH }) => (isH ? "column" : "row")};
     overflow-x: auto;
+    overflow-y: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     scrollbar-width: none;

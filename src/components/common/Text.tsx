@@ -40,7 +40,11 @@ const TextStyle = styled.span<Props>`
     color: ${(props) => {
         switch (props.variant) {
             case "primary":
-                return "#15104D";
+                return "#E1F3E8";
+            case "dark-primary":
+                return "#1CA673";
+            case "darkest":
+                return "#126245";
             case "grey":
                 return "#979797";
             case "white":

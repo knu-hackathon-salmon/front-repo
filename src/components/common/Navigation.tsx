@@ -64,9 +64,10 @@ const NavLink = styled(Link)<NavLinkProps>`
     gap: 4px;
     align-items: center;
     text-decoration: none;
+    color: #126245;
     font-weight: ${({ isActive }) => (isActive ? "bold" : "normal")};
     svg {
-        background-color: ${({ isActive }) => (isActive ? "#E1E0F1" : "none")};
+        background-color: ${({ isActive }) => (isActive ? "#E1F3E8" : "none")};
         padding: ${({ isActive }) => (isActive ? "4px" : "0")};
         border-radius: 50%;
     }

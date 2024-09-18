@@ -13,7 +13,7 @@ export type Item = {
     imageUrl: string;
 };
 
-export function FoodItem({ item }: { item: Item }) {
+export function FoodItemH({ item }: { item: Item }) {
     return (
         <Wrapper to="/detail/1">
             <FoodImage src={item.imageUrl} alt={item.name} />
@@ -38,14 +38,13 @@ export function FoodItem({ item }: { item: Item }) {
 }
 
 const Wrapper = styled(Link)`
-    width: 230px;
-    height: 100%;
+    width: 100%;
+    height: 80px;
     display: flex;
     overflow: hidden;
     scroll-snap-align: center;
     flex-shrink: 0;
-    flex-direction: column;
-    border: 1px solid #1ca673;
+    flex-direction: row;
     border-radius: 10px;
     text-decoration: none;
     color: black;
@@ -53,11 +52,13 @@ const Wrapper = styled(Link)`
 
 const FoodImage = styled.img`
     width: 100%;
-    max-width: 450px;
-    aspect-ratio: 1.8 / 1;
+    max-width: 80px;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
 `;
 
 const InfoWrapper = styled.div`
+    width: 100%;
     padding: 10px;
     display: flex;
     justify-content: space-between;

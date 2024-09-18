@@ -23,17 +23,17 @@ export default function MainPage() {
                 <Text size="m" weight="bold">
                     떨이 상품
                 </Text>
-                <FoodList />
+                <FoodList isH={false} />
                 <Spacing />
                 <Text size="m" weight="bold">
                     최근 등록된 상품
                 </Text>
-                <FoodList />
+                <FoodList isH={false} />
                 <Spacing />
                 <Text size="m" weight="bold">
                     지금 핫한 상품
                 </Text>
-                <FoodList />
+                <FoodList isH={false} />
                 <Spacing />
             </Wrapper>
         </>
@@ -42,7 +42,6 @@ export default function MainPage() {
 const SearchBarWrapper = styled.div`
     position: relative;
     width: 90%;
-    margin: 15px 0;
 `;
 const SearchBar = styled.input`
     box-sizing: border-box;
@@ -51,20 +50,20 @@ const SearchBar = styled.input`
     margin: 15px 0px;
 
     border-radius: 15px;
-    border: 1px solid #9874ff;
+    border: 1px solid #1ca673;
     padding: 0px 8px;
 
     width: 100%;
     height: 50px;
 
-    color: #9874ff;
+    color: #1ca673;
 
     &::placeholder {
-        color: #9874ff;
+        color: #78c1a7;
     }
 
     &:focus {
-        outline: 1.5px solid #9874ff;
+        outline: 1.5px solid #1ca673;
     }
 `;
 
@@ -73,7 +72,7 @@ const SearchIcon = styled(IoSearchSharp)`
     top: 50%;
     right: 15px;
     transform: translateY(-50%);
-    color: #9874ff;
+    color: #1ca673;
 `;
 
 const Wrapper = styled.div`
