@@ -21,17 +21,17 @@ export default function MainPage() {
             </SearchBarWrapper>
             <Wrapper>
                 <Text size="m" weight="bold">
-                    떨이 상품
+                    지금 구매해야 하는 <span className="emph">마지막</span> 상품!
                 </Text>
                 <FoodList isH={false} />
                 <Spacing />
                 <Text size="m" weight="bold">
-                    최근 등록된 상품
+                    <span className="emph">방금</span> 등록된 상품!
                 </Text>
                 <FoodList isH={false} />
                 <Spacing />
                 <Text size="m" weight="bold">
-                    지금 핫한 상품
+                    지금 <span className="emph">핫</span>한 상품!
                 </Text>
                 <FoodList isH={false} />
                 <Spacing />
@@ -80,6 +80,10 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
+    .emph {
+        color: #1ca673;
+        font-weight: bolders;
+    }
 `;
 
 const Spacing = styled.div`
