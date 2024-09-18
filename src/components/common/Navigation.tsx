@@ -68,7 +68,6 @@ const NavLink = styled(Link)<NavLinkProps>`
     font-weight: ${({ isActive }) => (isActive ? "bold" : "normal")};
     svg {
         background-color: ${({ isActive }) => (isActive ? "#E1F3E8" : "none")};
-        padding: ${({ isActive }) => (isActive ? "4px" : "0")};
         border-radius: 50%;
     }
 `;
