@@ -55,6 +55,8 @@ const Nav = styled.nav`
     padding: 16px 0px;
     z-index: 1000;
     background-color: white;
+
+    border-top: 1px solid rgba(0, 0, 0, 0.053);
 `;
 
 const NavItem = styled.div``;
