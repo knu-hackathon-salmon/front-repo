@@ -30,23 +30,23 @@ export default function SelectPage() {
             </Text>
             <RadioWrapper>
                 <input
-                    id="buyer"
+                    id="customer"
                     type="radio"
                     name="type"
-                    value="buyer"
+                    value="customer"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setType(e.target.value)}
                 />
-                <label htmlFor="buyer">판매자예요</label>
+                <label htmlFor="customer">판매자예요</label>
             </RadioWrapper>
             <RadioWrapper>
                 <input
-                    id="seller"
+                    id="shop"
                     type="radio"
                     name="type"
-                    value="seller"
+                    value="shop"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setType(e.target.value)}
                 />
-                <label htmlFor="seller">구매자예요</label>
+                <label htmlFor="shop">구매자예요</label>
             </RadioWrapper>
             <NextBtn onClick={handleType}>다음</NextBtn>
         </SelectWrapper>
