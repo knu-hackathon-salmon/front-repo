@@ -9,7 +9,12 @@ export function useWebSocket(onMessage: (message: string) => void) {
 
     useEffect(() => {
         const client = new Client({
-            brokerURL: "ws://local.corsmarket.ml/api/ws",
+            webSocketFactory: () => {
+                if (typeof WebSocket !== "function") {
+                    return new SockJS("http://local.corsmarket.ml/api/ws");
+                }
+                return new WebSocket("ws://local.corsmarket.ml/api/ws");
+            },
             connectHeaders: {
                 login: "user",
                 passcode: "password",
