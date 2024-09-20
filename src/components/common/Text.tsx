@@ -1,23 +1,12 @@
-import { forwardRef } from "react";
-
 import styled from "styled-components";
 
-type Props = {
+export interface IText {
     size: "xs" | "s" | "m" | "l" | "xl" | string;
     weight: "bold" | "normal";
     variant?: "primary" | "white" | "grey" | string;
-    children: React.ReactNode;
-} & React.ComponentProps<"span">;
+}
 
-export const Text = forwardRef(({ children, ...props }: Props, ref: React.Ref<HTMLDivElement>) => {
-    return (
-        <TextStyle ref={ref} {...props}>
-            {children}
-        </TextStyle>
-    );
-});
-
-const TextStyle = styled.span<Props>`
+export const Text = styled.span<IText>`
     font-weight: ${(props) => props.weight ?? "normal"};
 
     font-size: ${(props) => {
