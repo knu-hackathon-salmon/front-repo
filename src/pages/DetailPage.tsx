@@ -50,6 +50,7 @@ export default function DetailPage() {
                         <br />
                         연락주세요
                     </Text>
+                    <Spacing />
                     <Paragraph size="s" weight="bold">
                         찾아가는 길
                     </Paragraph>
@@ -69,7 +70,7 @@ export default function DetailPage() {
 }
 
 const DetailHeader = styled.div`
-    width: 100%;
+    width: 90%;
     padding: 12px 0px;
     span {
         display: inline-block;
@@ -87,9 +88,6 @@ const InfoWrapper = styled.div`
     padding: 30px 30px 120px;
     .solid {
         margin: 20px 0px;
-    }
-    p {
-        margin-top: 50px;
     }
 `;
 const Title = styled.div`
