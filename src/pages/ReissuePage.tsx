@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { authSessionStorage } from "@/utils/storage";
+
 export default function ReissuePage(): JSX.Element {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [redirectTo, setRedirectTo] = useState<string | null>(null);
@@ -34,6 +36,7 @@ export default function ReissuePage(): JSX.Element {
                             if (accessToken) {
                                 console.log("Access Token:", accessToken);
                                 setAccessToken(accessToken);
+                                authSessionStorage.set({ token: accessToken });
                                 // 메인 페이지로 이동할 URL을 상태로 설정
                                 setRedirectTo("http://localhost:5173");
                             }
