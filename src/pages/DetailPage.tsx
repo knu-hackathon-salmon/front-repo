@@ -66,6 +66,9 @@ const Image = styled.img`
 `;
 const InfoWrapper = styled.div`
     padding: 30px;
+    .solid {
+        margin: 20px 0px;
+    }
 `;
 const Title = styled.div`
     display: flex;
