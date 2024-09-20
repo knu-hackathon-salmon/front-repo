@@ -66,9 +66,6 @@ const InfoWrapper = styled.div`
     gap: 10px;
     align-items: center;
     padding: 20px 0;
-
-    position: fixed;
-    top: 68px;
     background-color: white;
     z-index: 100;
 `;
@@ -89,7 +86,7 @@ const ChatWrapper = styled.div`
     width: 90%;
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 148px - 24px);
+    min-height: calc(100vh - 148px - 100px);
 `;
 
 const MessagesWrapper = styled.div<MessageProps>`
@@ -115,16 +112,15 @@ const Message = styled.p`
 
 const SendWrapper = styled.form`
     height: 46px;
-    width: 90%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border: 1px solid #126245;
     border-radius: 10px;
-    position: fixed;
-    bottom: 100px;
     background-color: white;
     z-index: 100;
+    position: relative;
 
     input {
         color: #1ca673;
