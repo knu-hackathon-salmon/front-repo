@@ -21,7 +21,10 @@ export default function MyPage() {
                         @gyul
                     </Text>
                 </UserInfo>
-                <Btn>구매 목록</Btn>
+                <div>
+                    <Btn>구매 목록</Btn>
+                    <Btn>채팅 목록</Btn>
+                </div>
             </InfoWrapper>
             <ListWrapper>{/* <PurchaseList /> */}</ListWrapper>
         </>
