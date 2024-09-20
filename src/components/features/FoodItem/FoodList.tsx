@@ -30,8 +30,7 @@ export function FoodList({ isH, foodItems }: Props) {
         </Wrapper>
     );
 }
-
-const Wrapper = styled.div<Props>`
+const Wrapper = styled.div<Pick<Props, "isH">>`
     display: flex;
     gap: 10px;
     overflow: hidden;
