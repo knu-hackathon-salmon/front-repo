@@ -1,5 +1,6 @@
 import { useRef, useState, useMemo } from "react";
 import { FaCamera } from "react-icons/fa";
+import { TiDeleteOutline } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 
 import { styled } from "styled-components";
@@ -25,6 +26,11 @@ export default function PostPage() {
     const handleClickFileInput = () => {
         fileInputRef.current?.click();
     };
+
+    function removeImg(index: number) {
+        const updatedImages = imageFiles.filter((_, i) => i !== index);
+        setImageFiles(updatedImages);
+    }
 
     const uploadProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
         const fileList = e.target.files;
@@ -52,7 +58,12 @@ export default function PostPage() {
             );
         }
         return imageFiles.map((image, index) => (
-            <ShowFileImage key={index} src={image.thumbnail} alt={image.type} onClick={handleClickFileInput} />
+            <ShowFileWapper>
+                <ShowFileImage key={index} src={image.thumbnail} alt={image.type} onClick={handleClickFileInput} />
+                <ShowFileDeleteBtn type="button" onClick={() => removeImg(index)}>
+                    <TiDeleteOutline size={24} />
+                </ShowFileDeleteBtn>
+            </ShowFileWapper>
         ));
     }, [imageFiles]);
 
@@ -169,13 +180,26 @@ const ImageWrapper = styled.div`
         display: none;
     }
 `;
-const ShowFileImage = styled.img`
+const ShowFileWapper = styled.div`
+    position: relative;
     width: 200px;
     height: 200px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    margin: 8px;
+`;
+const ShowFileImage = styled.img`
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     margin: 5px;
 `;
 
+const ShowFileDeleteBtn = styled.button`
+    position: absolute;
+    right: 2px;
+    top: 6px;
+`;
 const UploadButton = styled.button`
     padding: 10px;
     border: none;
