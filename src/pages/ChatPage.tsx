@@ -5,6 +5,10 @@ import { styled } from "styled-components";
 
 import { useWebSocket } from "@/api/hooks/useWebSocket";
 
+interface MessageProps {
+    hasMessages: boolean;
+}
+
 export default function ChatPage() {
     const [messages, setMessages] = useState<string[]>([]);
     const chatInputRef = useRef<HTMLInputElement>(null);
@@ -38,10 +42,12 @@ export default function ChatPage() {
                 <Title>기황후</Title>
             </InfoWrapper>
             <ChatWrapper>
-                <MessagesWrapper>
-                    {messages.map((msg, index) => (
-                        <Message key={index}>{msg}</Message>
-                    ))}
+                <MessagesWrapper hasMessages={messages.length > 0}>
+                    {messages.length === 0 ? (
+                        <p>채팅이 없습니다. 메시지를 입력해보세요!</p>
+                    ) : (
+                        messages.map((msg, index) => <Message key={index}>{msg}</Message>)
+                    )}
                 </MessagesWrapper>
                 <SendWrapper onSubmit={handleSubmit}>
                     <input ref={chatInputRef} placeholder="채팅을 입력해주세요." />
@@ -55,11 +61,16 @@ export default function ChatPage() {
 }
 
 const InfoWrapper = styled.div`
-    width: 100%;
+    width: 90%;
     display: flex;
     gap: 10px;
     align-items: center;
     padding: 20px 0;
+
+    position: fixed;
+    top: 68px;
+    background-color: white;
+    z-index: 100;
 `;
 
 const Image = styled.img`
@@ -75,15 +86,23 @@ const Title = styled.p`
 `;
 
 const ChatWrapper = styled.div`
-    width: 100%;
+    width: 90%;
     display: flex;
     flex-direction: column;
+    min-height: calc(100vh - 148px - 24px);
 `;
 
-const MessagesWrapper = styled.div`
+const MessagesWrapper = styled.div<MessageProps>`
     flex-grow: 1;
     padding: 10px;
     overflow-y: auto;
+    background: #e7f1eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: ${(props) => (props.hasMessages ? "flex-start" : "center")};
+    align-items: center;
+    min-height: 200px;
+    color: #798b80;
 `;
 
 const Message = styled.p`
@@ -101,8 +120,11 @@ const SendWrapper = styled.form`
     justify-content: space-between;
     align-items: center;
     border: 1px solid #126245;
-    border-radius: 30px;
-    position: relative;
+    border-radius: 10px;
+    position: fixed;
+    bottom: 100px;
+    background-color: white;
+    z-index: 100;
 
     input {
         color: #1ca673;
