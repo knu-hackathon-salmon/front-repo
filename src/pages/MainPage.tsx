@@ -42,6 +42,10 @@ export default function MainPage() {
 const SearchBarWrapper = styled.div`
     position: relative;
     width: 90%;
+
+    svg {
+        cursor: pointer;
+    }
 `;
 const SearchBar = styled.input`
     box-sizing: border-box;
@@ -51,7 +55,7 @@ const SearchBar = styled.input`
 
     border-radius: 15px;
     border: 1px solid #1ca673;
-    padding: 0px 8px;
+    padding: 0px 10px;
 
     width: 100%;
     height: 50px;
@@ -60,6 +64,7 @@ const SearchBar = styled.input`
 
     &::placeholder {
         color: #78c1a7;
+        font-size: 14px;
     }
 
     &:focus {
