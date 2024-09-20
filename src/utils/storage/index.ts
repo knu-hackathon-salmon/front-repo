@@ -19,11 +19,10 @@ const initStorage = <T extends keyof StorageKey>(key: T, storage: Storage) => {
     return { get, set };
 };
 
-export const authSessionStorage = initStorage("authToken", sessionStorage);
+export const authSessionStorage = initStorage("token", sessionStorage);
 interface StorageKey {
-    authToken?: {
+    token?: {
         token: string;
-        email: string;
-        password?: string;
+        type?: string;
     };
 }

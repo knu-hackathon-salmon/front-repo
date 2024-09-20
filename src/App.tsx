@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
+import ProtectedRoute from "./Routes/ProtectedRoute";
 import MainLayout from "./components/common/MainLayout";
 import { GlobalStyle } from "./globals";
 import ChatPage from "./pages/ChatPage";
@@ -14,21 +15,26 @@ import SelectPage from "./pages/SelectPage";
 import SignUpPage from "./pages/SignUpPage";
 
 function App() {
+    const protectedRoutes = [
+        { path: "/", element: <MainPage /> },
+        { path: "/sign-up", element: <SignUpPage /> },
+        { path: "/select", element: <SelectPage /> },
+        { path: "/post", element: <PostPage /> },
+        { path: "/chat", element: <ChatPage /> },
+        { path: "/my", element: <MyPage /> },
+        { path: "/map", element: <MapPage /> },
+        { path: "/detail/:id", element: <DetailPage /> },
+    ];
     return (
         <>
             <GlobalStyle />
             <Routes>
                 <Route path="/" element={<MainLayout />}>
-                    <Route index path="/" element={<MainPage />} />
                     <Route path="/sign-in" element={<LoginPage />} />
-                    <Route path="/sign-up" element={<SignUpPage />} />
-                    <Route path="/select" element={<SelectPage />} />
-                    <Route path="/post" element={<PostPage />} />
-                    <Route path="/map" element={<MapPage />} />
-                    <Route path="/chat" element={<ChatPage />} />
-                    <Route path="/detail/:id" element={<DetailPage />} />
-                    <Route path="/my" element={<MyPage />} />
                     <Route path="/reissue" element={<ReissuePage />} />
+                    {protectedRoutes.map(({ path, element }) => (
+                        <Route key={path} path={path} element={<ProtectedRoute>{element}</ProtectedRoute>} />
+                    ))}
                 </Route>
             </Routes>
         </>

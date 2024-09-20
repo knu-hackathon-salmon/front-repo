@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -6,15 +6,17 @@ import Header, { HEADER_HEIGHT } from "./Header";
 import Navigation from "./Navigation";
 
 export default function MainLayout() {
+    const location = useLocation();
+    const isLoginPage = location.pathname === "/sign-in";
     return (
         <>
-            <Header />
+            {!isLoginPage && <Header />}
             <Wrapper>
                 <InnerWrapper>
                     <Outlet />
                 </InnerWrapper>
             </Wrapper>
-            <Navigation />
+            {!isLoginPage && <Navigation />}
         </>
     );
 }
