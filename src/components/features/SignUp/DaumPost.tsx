@@ -18,9 +18,6 @@ export default function DaumPost(props: any) {
             }
             fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
         }
-        // console.log(data);
-        // console.log(fullAddress);
-        // console.log(data.zonecode);
 
         props.setAddress({
             ...props,

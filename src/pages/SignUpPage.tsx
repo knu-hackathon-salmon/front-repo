@@ -7,41 +7,32 @@ import { styled } from "styled-components";
 import { Text } from "@/components/common/Text";
 import DaumPost from "@/components/features/SignUp/DaumPost";
 
-import { fetchInstance } from "@/api/instance";
+import { useGetCoordinates } from "@/api/hooks/useGetCoordinates";
+import { usePostSignup } from "@/api/hooks/usePostSignup";
 
-import { Coordinates } from "@/types";
-
-type UploadImage = {
-    file: File;
-    thumbnail: string;
-    type: string;
-};
-interface postCode {
-    roadAddress: string;
-    zonecode: number | string;
-}
+import {  UploadImage, postCode } from "@/types";
 
 export default function SignUpPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [imageFile, setImageFile] = useState<UploadImage | null>(null);
     const [userName, setUserName] = useState("");
-    const [userTel, setUserTel] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [detailAddress, setDetailAddress] = useState("");
     const [businessHours, setBusinessHours] = useState("");
     const [productDescription, setProductDescription] = useState("");
-    const [coordinates, setCoordinates] = useState<Coordinates | null>(null); // 위도, 경도 상태 추가
     const [popup, setPopup] = useState(false);
     const [form, setForm] = useState<postCode>({
         roadAddress: "",
         zonecode: "",
     });
-    const handleComplete = () => {
-        setPopup(!popup);
-    };
-
     const navigate = useNavigate();
     const location = useLocation();
     const { type } = location.state || {};
+
+    const { mutate: postSignup } = usePostSignup();
+    const handleComplete = () => {
+        setPopup(!popup);
+    };
 
     const handleClickFileInput = () => {
         fileInputRef.current?.click();
@@ -58,26 +49,6 @@ export default function SignUpPage() {
             });
         }
     };
-
-    const fetchCoordinates = async (address: string) => {
-        try {
-            const response = await fetchInstance.get(`https://dapi.kakao.com/v2/local/search/address.json`, {
-                params: { query: address },
-                headers: {
-                    Authorization: `KakaoAK ${import.meta.env.VITE_KAKAO_MAP_KEY}`,
-                },
-            });
-
-            const { documents } = response.data;
-            if (documents.length > 0) {
-                const { x, y } = documents[0];
-                setCoordinates({ latitude: y, longitude: x });
-            }
-        } catch (error) {
-            console.error("Failed to fetch coordinates:", error);
-        }
-    };
-
     const showImage = useMemo(() => {
         if (!imageFile) {
             return <FaCamera />;
@@ -88,51 +59,43 @@ export default function SignUpPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        await fetchCoordinates(form.roadAddress);
-
+        const { latitude, longitude } = (await useGetCoordinates(form.roadAddress).data) || {};
         const jsonData =
             type === "shop"
                 ? {
                       shopSignUpRequest: {
-                          shopName: userName, // 업체명
-                          roadAddress: form.roadAddress, // 기본주소
-                          detailAddress: detailAddress, // 상세주소
-                          latitude: coordinates?.latitude, // 위도
-                          longitude: coordinates?.longitude, // 경도
-                          businessHours: businessHours, // 운영시간
-                          phoneNumber: userTel, // 전화번호
-                          shopDescription: productDescription, // 상품 소개
+                          shopName: userName,
+                          roadAddress: form.roadAddress,
+                          detailAddress,
+                          latitude,
+                          longitude,
+                          businessHours,
+                          phoneNumber,
+                          shopDescription: productDescription,
                       },
                   }
                 : {
                       customerSignUpRequest: {
-                          nickname: userName, // 닉네임
-                          phoneNumber: userTel, // 전화번호
-                          roadAddress: form.roadAddress, // 기본주소
-                          detailAddress: detailAddress, // 상세주소
-                          latitude: coordinates?.latitude, // 위도
-                          longitude: coordinates?.longitude, // 경도
+                          nickname: userName,
+                          phoneNumber,
+                          roadAddress: form.roadAddress,
+                          detailAddress,
+                          latitude,
+                          longitude,
                       },
                   };
 
         const formData = new FormData();
-        const jsonBlob = new Blob([JSON.stringify(jsonData)], { type: "application/json" });
-        formData.append("jsonData", jsonBlob);
+        formData.append("jsonData", new Blob([JSON.stringify(jsonData)], { type: "application/json" }));
+        if (imageFile) formData.append("uploadPhoto", imageFile.file);
 
-        if (imageFile) {
-            formData.append("uploadPhoto", imageFile.file);
-        }
-        try {
-            const response = await fetchInstance.post(`/api/member/${type}/sign-up`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-            console.log(response.data);
-            navigate("/");
-        } catch (error) {
-            console.error("Error submitting the form:", error);
-        }
+        postSignup(
+            { type, formData },
+            {
+                onSuccess: () => navigate("/"),
+                onError: (error) => console.error("Error:", error),
+            },
+        );
     };
 
     return (
@@ -201,8 +164,8 @@ export default function SignUpPage() {
                     <InputField
                         type="tel"
                         placeholder="ex) 053-123-4567"
-                        value={userTel}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserTel(e.target.value)}
+                        value={phoneNumber}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
                         required
                     />
                 </InputWrapper>

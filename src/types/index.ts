@@ -21,7 +21,12 @@ export type CustomerSignUpRequest = {
         longitude: number | undefined;
     };
 };
-export interface Coordinates {
-    latitude: string;
-    longitude: string;
+export type UploadImage = {
+    file: File;
+    thumbnail: string;
+    type: string;
+};
+export interface postCode {
+    roadAddress: string;
+    zonecode: number | string;
 }
