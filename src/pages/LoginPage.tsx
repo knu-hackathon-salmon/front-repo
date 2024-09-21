@@ -1,64 +1,78 @@
-import Image from "../images/logo.png";
+import { useEffect } from "react";
+import { FcGoogle } from "react-icons/fc";
 
-export default function LoginPage(): JSX.Element {
+import { styled } from "styled-components";
+
+import Kakao from "@/assets/kakao.png";
+import Image from "@/assets/logo.png";
+
+import { authSessionStorage } from "@/utils/storage";
+
+export default function LoginPage() {
+    //test용 무적 토큰
+    useEffect(() => {
+        const storedToken = authSessionStorage.get();
+        if (!storedToken) {
+            authSessionStorage.set({
+                token: "temporaryTokenValue",
+                type: "Bearer",
+            });
+        }
+    }, []);
     return (
-        <div style={styles.container}>
-            <h1 style={styles.title}>푸나바다</h1> {/* 초록색 글자 */}
-            <div style={styles.logoContainer}>
-                <img src={Image} alt="푸나바다 로고" style={styles.logo} />
-            </div>
-            <div style={styles.buttonContainer}>
-                <button
-                    onClick={() => (window.location.href = "http://localhost:8080/login")}
-                    style={styles.loginButton}
-                >
-                    구글 로그인
-                </button>
-                <button
-                    onClick={() => (window.location.href = "http://localhost:8080/login")}
-                    style={styles.loginButton}
-                >
-                    카카오 로그인
-                </button>
-            </div>
-        </div>
+        <Container>
+            <Title>푸나바다</Title>
+
+            <LogoContainer>
+                <Logo src={Image} alt="푸나바다 로고" />
+            </LogoContainer>
+            <ButtonContainer>
+                <Button onClick={() => (window.location.href = "http://localhost:8080/login")}>
+                    <FcGoogle />
+                    <span>Google 계정으로 로그인</span>
+                </Button>
+                <Button onClick={() => (window.location.href = "http://localhost:8080/login")}>
+                    <KakaoLogo src={Kakao} alt="Kakao 로그인" />
+                </Button>
+            </ButtonContainer>
+        </Container>
     );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center", // 중앙 정렬
-        justifyContent: "center",
-        textAlign: "center",
-        padding: "20px",
-        height: "100vh", // 화면 전체 높이
-    },
-    title: {
-        fontSize: "48px", // 글자 크기 키움
-        fontWeight: "bold",
-        color: "#1CA673", // 초록색 글자
-        marginBottom: "20px", // 이미지와 간격
-    },
-    logoContainer: {
-        marginBottom: "30px",
-    },
-    logo: {
-        width: "400px", // 이미지 크기 키움
-        height: "auto",
-    },
-    buttonContainer: {
-        marginTop: "20px",
-    },
-    loginButton: {
-        margin: "10px",
-        padding: "10px 20px",
-        border: "none",
-        borderRadius: "5px",
-        backgroundColor: "#1CA673", // 버튼 배경색
-        color: "white",
-        fontSize: "16px",
-        cursor: "pointer",
-    },
-};
+const Container = styled.div`
+    width: min(100%, 700px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+`;
+
+const Title = styled.h1`
+    font-size: 48px;
+    font-weight: bolder;
+    color: #1ca673;
+    margin-bottom: 20px;
+`;
+const LogoContainer = styled.div`
+    margin-bottom: 30px;
+`;
+const Logo = styled.img`
+    width: 400px;
+    height: auto;
+`;
+const ButtonContainer = styled.div`
+    margin-top: 20px;
+`;
+const Button = styled.button`
+    margin: 10px;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 5px;
+    background: none;
+    cursor: pointer;
+`;
+const KakaoLogo = styled.img`
+    margin-right: 8px;
+`;
