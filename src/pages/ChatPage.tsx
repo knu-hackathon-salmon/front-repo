@@ -26,8 +26,9 @@ export default function ChatPage() {
         const chatValue = chatInput.value.trim();
         if (chatValue === "") return;
 
-        sendMessage("/topic/general", chatValue);
+        sendMessage("/app/chat/private/1", chatValue);
 
+        console.log("chatValue", chatValue);
         chatInput.value = "";
     };
 
