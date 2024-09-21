@@ -10,7 +10,7 @@ import DaumPost from "@/components/features/SignUp/DaumPost";
 import { useGetCoordinates } from "@/api/hooks/useGetCoordinates";
 import { usePostSignup } from "@/api/hooks/usePostSignup";
 
-import {  UploadImage, postCode } from "@/types";
+import { UploadImage, postCode } from "@/types";
 
 export default function SignUpPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +30,7 @@ export default function SignUpPage() {
     const { type } = location.state || {};
 
     const { mutate: postSignup } = usePostSignup();
+
     const handleComplete = () => {
         setPopup(!popup);
     };
@@ -110,7 +111,6 @@ export default function SignUpPage() {
                     accept="image/jpg, image/jpeg, image/png"
                     ref={fileInputRef}
                     onChange={uploadProfile}
-                    multiple
                 />
                 <UploadButton type="button" onClick={handleClickFileInput}>
                     사진 편집
