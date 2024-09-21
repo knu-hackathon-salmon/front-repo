@@ -1,38 +1,39 @@
 import { useEffect, useRef } from "react";
 
-import SockJS from "sockjs-client";
+import { authSessionStorage } from "@/utils/storage";
 
 import { Client } from "@stomp/stompjs";
 
 export function useWebSocket(onMessage: (message: string) => void) {
     const clientRef = useRef<Client | null>(null);
 
+    const authToken = authSessionStorage.get();
     useEffect(() => {
         const client = new Client({
-            webSocketFactory: () => {
-                if (typeof WebSocket !== "function") {
-                    return new SockJS("http://local.corsmarket.ml/api/ws");
-                }
-                return new WebSocket("ws://local.corsmarket.ml/api/ws");
-            },
+            brokerURL: `ws://localhost:8080/ws`, // WebSocket URL
             connectHeaders: {
-                login: "user",
-                passcode: "password",
+                //token 수정 필요 ${authToken?.token}
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJiZmwxMjM0MTIzNEBnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9HT09HTEVfVVNFUiIsInRva2VuX3R5cGUiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE3MjY4OTkyNTQsImV4cCI6MTcyNjkwMjg1NH0.yEec4zglum7UFTS_rc8hZlDa7DKRqXMY_aMYsadbYXs`,
             },
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
-            debug: (str) => console.log(str),
         });
 
         client.onConnect = () => {
-            console.log("Connected to WebSocket");
-            client.subscribe("/queue/test", (message) => onMessage(message.body));
-        };
+            console.log("WebSocket 연결 성공!");
 
-        client.onStompError = (frame) => {
-            console.error("Broker reported error: " + frame.headers["message"]);
-            console.error("Additional details: " + frame.body);
+            client.subscribe(
+                `/topic/chat/private/1`, // 채널 ID 사용
+                (message) => {
+                    const parsedMessage = JSON.parse(message.body);
+                    onMessage(parsedMessage);
+                },
+                {
+                    //${authToken?.token}`수정필요
+                    Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJiZmwxMjM0MTIzNEBnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9HT09HTEVfVVNFUiIsInRva2VuX3R5cGUiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE3MjY4OTkyNTQsImV4cCI6MTcyNjkwMjg1NH0.yEec4zglum7UFTS_rc8hZlDa7DKRqXMY_aMYsadbYXs`,
+                }, // 구독 시 Authorization 헤더 추가
+            );
         };
 
         client.activate();
@@ -41,10 +42,26 @@ export function useWebSocket(onMessage: (message: string) => void) {
         return () => {
             client.deactivate();
         };
-    }, [onMessage]);
+    }, [onMessage, authToken?.token]);
 
     const sendMessage = (destination: string, body: string) => {
-        clientRef.current?.publish({ destination, body });
+        clientRef.current?.publish({
+            destination,
+            body: JSON.stringify({
+                content: body,
+                messageId: "someUniqueId",
+                chatId: "1",
+                senderEmail: "exam@exam.com",
+                senderName: "Name",
+                createTime: new Date().toISOString(),
+                Authorization: `eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJiZmwxMjM0MTIzNEBnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9HT09HTEVfVVNFUiIsInRva2VuX3R5cGUiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE3MjY4OTkyNTQsImV4cCI6MTcyNjkwMjg1NH0.yEec4zglum7UFTS_rc8hZlDa7DKRqXMY_aMYsadbYXs`,
+            }),
+            headers: {
+                Authorization:
+                    "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJiZmwxMjM0MTIzNEBnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9HT09HTEVfVVNFUiIsInRva2VuX3R5cGUiOiJhY2Nlc3NfdG9rZW4iLCJpYXQiOjE3MjY4OTkyNTQsImV4cCI6MTcyNjkwMjg1NH0.yEec4zglum7UFTS_rc8hZlDa7DKRqXMY_aMYsadbYXs",
+            },
+        });
+        console.log(`Sent to ${destination}:`, body);
     };
 
     return { sendMessage };
