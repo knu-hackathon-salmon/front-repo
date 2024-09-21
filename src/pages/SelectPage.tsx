@@ -36,7 +36,7 @@ export default function SelectPage() {
                     value="customer"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setType(e.target.value)}
                 />
-                <label htmlFor="customer">판매자예요</label>
+                <label htmlFor="customer">구매자예요</label>
             </RadioWrapper>
             <RadioWrapper>
                 <input
@@ -46,7 +46,7 @@ export default function SelectPage() {
                     value="shop"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setType(e.target.value)}
                 />
-                <label htmlFor="shop">구매자예요</label>
+                <label htmlFor="shop">판매자예요</label>
             </RadioWrapper>
             <NextBtn onClick={handleType}>다음</NextBtn>
         </SelectWrapper>

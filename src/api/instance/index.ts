@@ -13,14 +13,36 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
             ...config.headers,
         },
     });
+    axios.defaults.withCredentials = true;
+    instance.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+            const originalRequest = error.config;
+
+            if (error.response && error.response.status === 401) {
+                try {
+                    const refreshResponse = await instance.get(`${BASE_URL}/api/jwt/access-token`, {
+                        withCredentials: true,
+                    });
+                    console.log(refreshResponse.data);
+
+                    return instance(originalRequest); // 재요청
+                } catch (refreshError) {
+                    console.error("토큰 갱신 실패:", refreshError);
+                    return Promise.reject(refreshError);
+                }
+            }
+
+            return Promise.reject(error);
+        },
+    );
 
     return instance;
 };
 
 export const BASE_URL = "http://35.184.36.31:8080";
-// TODO: 추후 서버 API 주소 변경 필요
 export const fetchInstance = initInstance({
-    baseURL: "http://35.184.36.31:8080",
+    baseURL: BASE_URL,
 });
 
 export const queryClient = new QueryClient({

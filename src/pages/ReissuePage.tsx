@@ -1,62 +1,56 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { BASE_URL, fetchInstance } from "@/api/instance";
 
 import { authSessionStorage } from "@/utils/storage";
 
-export default function ReissuePage(): JSX.Element {
-    const [accessToken, setAccessToken] = useState<string | null>(null);
-    const [redirectTo, setRedirectTo] = useState<string | null>(null);
+export default function ReissuePage() {
+    const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("Current Pathname:", window.location.pathname);
+        const requestReissue = async () => {
+            if (window.location.pathname === "/reissue") {
+                console.log("Sending request to backend");
 
-        if (window.location.pathname === "/reissue") {
-            console.log("Sending request to backend");
+                try {
+                    const response = await fetchInstance.get(`${BASE_URL}/api/jwt/reissue`, {
+                        withCredentials: true,
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
 
-            fetch("http://localhost:8080/api/jwt/access-token", {
-                method: "GET",
-                credentials: "include", // 쿠키를 포함시키기 위해 설정
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((response) => {
                     console.log("Response Status:", response.status);
+                    const accessToken = response.headers["authorization"];
+                    console.log("Access Token:", accessToken);
 
                     if (response.status === 200) {
-                        console.log("Response status:", response.status);
+                        console.log("Response Body:", response.data);
+                        const type = response.headers["type"] ?? undefined;
 
-                        // 응답 바디 읽기
-                        return response.json().then((data) => {
-                            console.log("Response Body:", data);
+                        if (accessToken) {
+                            authSessionStorage.set({ token: accessToken, type: type });
+                            navigate("/");
+                        }
+                    } else if (response.status === 201) {
+                        console.log("Response Body:", response.data);
 
-                            // 응답 바디에서 토큰 추출
-                            const accessToken = response.headers.get("Authorization"); // 데이터에서 토큰을 추출
-                            console.log("Access Token:", accessToken);
-
-                            if (accessToken) {
-                                console.log("Access Token:", accessToken);
-                                setAccessToken(accessToken);
-                                authSessionStorage.set({ token: accessToken });
-                                // 메인 페이지로 이동할 URL을 상태로 설정
-                                setRedirectTo("http://localhost:5173");
-                            }
-                        });
+                        if (accessToken) {
+                            authSessionStorage.set({ token: accessToken });
+                            navigate("/sign-up");
+                        }
                     } else {
-                        console.error("Failed to reissue token:", response.status);
+                        console.error("Failed to reissue token:", response.status, response.data);
                     }
-                })
-                .catch((error) => {
+                } catch (error) {
                     console.error("Error:", error);
-                });
-        }
-    }, []);
+                }
+            }
+        };
 
-    useEffect(() => {
-        if (redirectTo) {
-            // 리다이렉션 처리
-            window.location.href = redirectTo;
-        }
-    }, [redirectTo]);
+        requestReissue();
+    }, []);
 
     return (
         <div>

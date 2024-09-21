@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
+// import { authSessionStorage } from "@/utils/storage";
 import { FcGoogle } from "react-icons/fc";
 
 import { styled } from "styled-components";
@@ -6,19 +7,17 @@ import { styled } from "styled-components";
 import Kakao from "@/assets/kakao.png";
 import Image from "@/assets/logo.png";
 
-import { authSessionStorage } from "@/utils/storage";
-
 export default function LoginPage() {
     //test용 무적 토큰
-    useEffect(() => {
-        const storedToken = authSessionStorage.get();
-        if (!storedToken) {
-            authSessionStorage.set({
-                token: "temporaryTokenValue",
-                type: "Bearer",
-            });
-        }
-    }, []);
+    // useEffect(() => {
+    //     const storedToken = authSessionStorage.get();
+    //     if (!storedToken) {
+    //         authSessionStorage.set({
+    //             token: "temporaryTokenValue",
+    //             type: "customer",
+    //         });
+    //     }
+    // }, []);
     return (
         <Container>
             <Title>푸나바다</Title>
@@ -31,7 +30,7 @@ export default function LoginPage() {
                     <FcGoogle />
                     <span>Google 계정으로 로그인</span>
                 </Button>
-                <Button onClick={() => (window.location.href = "http://localhost:8080/login")}>
+                <Button onClick={() => (window.location.href = "http://35.184.36.31/oauth2/authorization/kakao")}>
                     <KakaoLogo src={Kakao} alt="Kakao 로그인" />
                 </Button>
             </ButtonContainer>

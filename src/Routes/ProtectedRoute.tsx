@@ -6,6 +6,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
     const authInfo = useAuth();
 
     if (!authInfo || !authInfo.token) {
+        console.log(authInfo);
         return <Navigate to="/sign-in" />;
     }
 

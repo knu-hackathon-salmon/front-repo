@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { authSessionStorage } from "@/utils/storage";
 
 type AuthInfo = {
-    token: string;
+    token?: string;
     type?: string;
 };
 

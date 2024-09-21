@@ -4,42 +4,25 @@ import styled from "styled-components";
 
 import { Text } from "@/components/common/Text";
 
-export type Item = {
-    id: number;
-    title: string;
-    storeName: string;
-    foodName: string;
-    price: number;
-    stock: number;
-    address: string;
-    imageUrl: string;
-};
+import { MapItem } from "@/types";
 
-export function FoodItem({ item }: { item: Item }) {
+export function FoodItem({ item }: { item: MapItem }) {
     return (
         <Wrapper to="/detail/1">
-            <FoodImage src={item.imageUrl} alt={item.foodName} />
+            <FoodImage src={item.imageUrl} alt={item.title} />
             <InfoWrapper>
                 <Info>
                     <Text size="l" weight="bold">
                         {item.title}
                     </Text>
-                    <Text size="m" weight="normal">
-                        {item.foodName}
-                    </Text>
                     <Text size="s" weight="normal">
                         {item.storeName}
                     </Text>
                     <Text size="xs" weight="normal" variant="gray">
-                        {item.address}
-                    </Text>
-                    <Text size="xs" weight="normal" variant="gray">
-                        재고: {item.stock}개
+                        {item.roadAddress}
                     </Text>
                 </Info>
-                <Text size="s" weight="bold">
-                    {item.price}원
-                </Text>
+                <Price>{item.price}원</Price>
             </InfoWrapper>
         </Wrapper>
     );

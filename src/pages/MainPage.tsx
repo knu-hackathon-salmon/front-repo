@@ -4,15 +4,21 @@ import { IoSearchSharp } from "react-icons/io5";
 import styled from "styled-components";
 
 import { Text } from "@/components/common/Text";
-import { FoodList } from "@/components/features/FoodItem/FoodList";
+import { MainFoodList } from "@/components/features/Main/MainFoodList";
+
+import { useGetMainFood } from "@/api/hooks/useGetMainFood";
 
 export default function MainPage() {
     const [input, setInput] = useState<string>("");
+    const { data, isLoading, error } = useGetMainFood(37.7749, -122.4194);
 
+    const foodData = data?.data;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value);
     };
 
+    if (isLoading) return <p>Loading...</p>;
+    if (!foodData || error) return <p>Error loading food data!</p>;
     return (
         <>
             <SearchBarWrapper>
@@ -23,17 +29,17 @@ export default function MainPage() {
                 <Text size="m" weight="bold">
                     지금 구매해야 하는 <span className="emph">마지막</span> 상품!
                 </Text>
-                <FoodList isH={false} />
+                {data && <MainFoodList foodItems={foodData.additionalProp1} />}
                 <Spacing />
                 <Text size="m" weight="bold">
                     <span className="emph">방금</span> 등록된 상품!
                 </Text>
-                <FoodList isH={false} />
+                {data && <MainFoodList foodItems={foodData.additionalProp2} />}
                 <Spacing />
                 <Text size="m" weight="bold">
                     지금 <span className="emph">핫</span>한 상품!
                 </Text>
-                <FoodList isH={false} />
+                {data && <MainFoodList foodItems={foodData.additionalProp3} />}
                 <Spacing />
             </Wrapper>
         </>
