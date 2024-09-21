@@ -1,13 +1,14 @@
 import { useRef, useState, useMemo } from "react";
 import { FaCamera } from "react-icons/fa";
-import { TiDeleteOutline } from "react-icons/ti";
-import { useNavigate } from "react-router-dom";
+import { IoMdClose } from "react-icons/io";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { styled } from "styled-components";
 
 import { Text } from "@/components/common/Text";
 
-import { fetchInstance } from "@/api/instance";
+import { usePostFood } from "@/api/hooks/usePostFood";
+import { usePutFood } from "@/api/hooks/usePutFood";
 
 type UploadImage = {
     file: File;
@@ -18,10 +19,17 @@ type UploadImage = {
 export default function PostPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [imageFiles, setImageFiles] = useState<UploadImage[]>([]);
-    const [productName, setProductName] = useState("");
-    const [productDescription, setProductDescription] = useState("");
-    const [productPrice, setProductPrice] = useState("");
+    const [title, setTitle] = useState("");
+    const [stock, setStock] = useState(0);
+    const [expiration, setExpiration] = useState("");
+    const [price, setPrice] = useState(0);
+    const [content, setContent] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
+    const { foodId, prevformData, type } = location.state || {};
+
+    const { mutate: postFood } = usePostFood();
+    const { mutate: putFood } = usePutFood();
 
     const handleClickFileInput = () => {
         fileInputRef.current?.click();
@@ -61,7 +69,7 @@ export default function PostPage() {
             <ShowFileWapper>
                 <ShowFileImage key={index} src={image.thumbnail} alt={image.type} onClick={handleClickFileInput} />
                 <ShowFileDeleteBtn type="button" onClick={() => removeImg(index)}>
-                    <TiDeleteOutline size={24} />
+                    <IoMdClose size={24} />
                 </ShowFileDeleteBtn>
             </ShowFileWapper>
         ));
@@ -69,20 +77,45 @@ export default function PostPage() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const jsonData =
+            type === "create"
+                ? {
+                      createFoodDto: {
+                          title,
+                          stock,
+                          expiration,
+                          price,
+                          content,
+                      },
+                  }
+                : {
+                      updateFoodDto: {
+                          newTitle: title,
+                          newStock: stock,
+                          newExpiration: expiration,
+                          newPrice: price,
+                          newContent: content,
+                      },
+                  };
         const formData = new FormData();
-        formData.append("name", productName);
-        formData.append("description", productDescription);
-        formData.append("price", productPrice);
-
+        formData.append("jsonData", new Blob([JSON.stringify(jsonData)], { type: "application/json" }));
         imageFiles.forEach((image) => {
             formData.append("files", image.file);
         });
-        try {
-            const response = await fetchInstance.post("/new", formData);
-            console.log(response.data);
-            navigate("/");
-        } catch (error) {
-            console.error("Error submitting the form:", error);
+
+        if (type === "create") {
+            postFood(formData, {
+                onSuccess: () => navigate("/"),
+                onError: (error) => console.error("Error:", error),
+            });
+        } else {
+            putFood(
+                { foodId, formData },
+                {
+                    onSuccess: () => navigate(`/detail/${foodId}`),
+                    onError: (error) => console.error("Error:", error),
+                },
+            );
         }
     };
 
@@ -105,25 +138,49 @@ export default function PostPage() {
                 </UploadButton>
                 <InputWrapper>
                     <Text size="s" weight="bold">
-                        상품명
+                        제목
                     </Text>
                     <InputField
                         type="text"
-                        placeholder="상품명"
-                        value={productName}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setProductName(e.target.value)}
+                        placeholder="제목"
+                        value={type === "create" ? title : prevformData.title}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                         required
                     />
                 </InputWrapper>
                 <InputWrapper>
                     <Text size="s" weight="bold">
-                        상품 가격
+                        판매 가격
                     </Text>
                     <InputField
                         type="number"
-                        placeholder="상품 가격"
-                        value={productPrice}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setProductPrice(e.target.value)}
+                        placeholder="판매 가격"
+                        value={type === "create" ? price : prevformData.price}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPrice(Number(e.target.value))}
+                        required
+                    />
+                </InputWrapper>
+                <InputWrapper>
+                    <Text size="s" weight="bold">
+                        재고 수량
+                    </Text>
+                    <InputField
+                        type="number"
+                        placeholder="재고 수량"
+                        value={type === "create" ? stock : prevformData.stock}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStock(Number(e.target.value))}
+                        required
+                    />
+                </InputWrapper>
+                <InputWrapper>
+                    <Text size="s" weight="bold">
+                        유통기한
+                    </Text>
+                    <InputField
+                        type="text"
+                        placeholder="ex) 냉장보관 30일"
+                        value={type === "create" ? expiration : prevformData.expiration}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExpiration(e.target.value)}
                         required
                     />
                 </InputWrapper>
@@ -132,10 +189,11 @@ export default function PostPage() {
                         상품 소개
                     </Text>
                     <InputField
+                        className="description"
                         type="text"
-                        placeholder="상품 소개"
-                        value={productDescription}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setProductDescription(e.target.value)}
+                        placeholder="상품을 소개해주세요"
+                        value={type === "create" ? content : prevformData.content}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
                         required
                     />
                 </InputWrapper>
@@ -203,13 +261,14 @@ const ShowFileDeleteBtn = styled.button`
 const UploadButton = styled.button`
     padding: 10px;
     border: none;
-    background-color: #007bff;
+    background-color: #1ca673;
     color: white;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 10px;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: #227e5c;
     }
 `;
 const SubmitButton = styled.button`
@@ -220,6 +279,7 @@ const SubmitButton = styled.button`
     color: white;
     border-radius: 100px;
     cursor: pointer;
+    margin: 10px 0px;
 
     &:hover {
         background-color: #227e5c;
@@ -231,13 +291,18 @@ const InputWrapper = styled.div`
     gap: 10px;
     align-items: center;
     justify-content: space-between;
+    .description {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
 `;
 const BlankCamera = styled.div`
     width: 200px;
     height: 200px;
     background-color: #e3e3e3;
     align-content: center;
-    border-radius: 20px;
+    border-radius: 4px;
+    margin-top: 10px;
 
     svg {
         width: 100px;
