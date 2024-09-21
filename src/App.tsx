@@ -14,6 +14,8 @@ import ReissuePage from "./pages/ReissuePage";
 import SelectPage from "./pages/SelectPage";
 import SignUpPage from "./pages/SignUpPage";
 
+// import TempPage from "./pages/TempPage";
+
 function App() {
     const protectedRoutes = [
         { path: "/", element: <MainPage /> },

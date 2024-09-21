@@ -3,7 +3,12 @@ import { useState } from "react";
 import { styled } from "styled-components";
 
 import { Text } from "@/components/common/Text";
-import { FoodList } from "@/components/features/FoodItem/FoodList";
+import { FoodList } from "@/components/features/Map/FoodList";
+
+import { useGetWishList } from "@/api/hooks/useGetWishList";
+
+import { useAuth } from "@/provider/Auth";
+import { WishItem } from "@/types";
 
 interface TabButtonProps {
     isActive: boolean;
@@ -13,7 +18,13 @@ export default function MyPage() {
     {
         /*유저정보를 받아서 구매자인지 판매자인지 구분하는 코드*/
     }
+    const type = useAuth()?.type;
+
     const [activeTab, setActiveTab] = useState("first");
+    const { data } = useGetWishList();
+
+    const wishList: WishItem[] = (data?.data || []) as WishItem[];
+
     return (
         <>
             <InfoWrapper>
@@ -34,15 +45,29 @@ export default function MyPage() {
                 </UserInfo>
             </InfoWrapper>
             <TabMenu>
-                <TabButton isActive={activeTab === "first"} onClick={() => setActiveTab("first")}>
-                    구매목록
-                </TabButton>
+                {type === "shop" ? (
+                    <TabButton isActive={activeTab === "first"} onClick={() => setActiveTab("first")}>
+                        판매 목록
+                    </TabButton>
+                ) : (
+                    <TabButton isActive={activeTab === "wish"} onClick={() => setActiveTab("wish")}>
+                        찜 목록
+                    </TabButton>
+                )}
                 <TabButton isActive={activeTab === "chat"} onClick={() => setActiveTab("chat")}>
                     채팅방
                 </TabButton>
             </TabMenu>
 
-            <ListWrapper>{activeTab === "first" ? <FoodList isH={true} /> : <FoodList isH={true} />}</ListWrapper>
+            <ListWrapper>
+                {activeTab === "first" ? (
+                    <FoodList foodItems={wishList} />
+                ) : activeTab === "wish" ? (
+                    <FoodList foodItems={wishList} />
+                ) : (
+                    <FoodList foodItems={wishList} />
+                )}
+            </ListWrapper>
         </>
     );
 }

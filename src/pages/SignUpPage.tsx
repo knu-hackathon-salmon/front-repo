@@ -1,7 +1,8 @@
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { FaCamera } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { AxiosResponse } from "axios";
 import { styled } from "styled-components";
 
 import { Text } from "@/components/common/Text";
@@ -9,6 +10,8 @@ import DaumPost from "@/components/features/SignUp/DaumPost";
 
 import { useGetCoordinates } from "@/api/hooks/useGetCoordinates";
 import { usePostSignup } from "@/api/hooks/usePostSignup";
+
+import { authSessionStorage } from "@/utils/storage";
 
 import { UploadImage, postCode } from "@/types";
 
@@ -19,6 +22,7 @@ export default function SignUpPage() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [detailAddress, setDetailAddress] = useState("");
     const [businessHours, setBusinessHours] = useState("");
+    const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
     const [productDescription, setProductDescription] = useState("");
     const [popup, setPopup] = useState(false);
     const [form, setForm] = useState<postCode>({
@@ -27,8 +31,9 @@ export default function SignUpPage() {
     });
     const navigate = useNavigate();
     const location = useLocation();
-    const { type } = location.state || {};
+    const type = location.state?.type;
 
+    const { data: fetchedCoordinates } = useGetCoordinates(form.roadAddress);
     const { mutate: postSignup } = usePostSignup();
 
     const handleComplete = () => {
@@ -57,43 +62,57 @@ export default function SignUpPage() {
         return <ShowFileImage src={imageFile.thumbnail} alt={imageFile.type} onClick={handleClickFileInput} />;
     }, [imageFile]);
 
+    useEffect(() => {
+        if (fetchedCoordinates) {
+            setCoordinates(fetchedCoordinates);
+        }
+    }, [fetchedCoordinates]);
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        const { latitude, longitude } = (await useGetCoordinates(form.roadAddress).data) || {};
+        console.log(coordinates);
         const jsonData =
             type === "shop"
                 ? {
-                      shopSignUpRequest: {
-                          shopName: userName,
-                          roadAddress: form.roadAddress,
-                          detailAddress,
-                          latitude,
-                          longitude,
-                          businessHours,
-                          phoneNumber,
-                          shopDescription: productDescription,
-                      },
+                      shopName: userName,
+                      roadAddress: form.roadAddress,
+                      detailAddress,
+                      latitude: coordinates?.latitude,
+                      longitude: coordinates?.longitude,
+                      businessHours,
+                      phoneNumber,
+                      shopDescription: productDescription,
                   }
                 : {
-                      customerSignUpRequest: {
-                          nickname: userName,
-                          phoneNumber,
-                          roadAddress: form.roadAddress,
-                          detailAddress,
-                          latitude,
-                          longitude,
-                      },
+                      nickname: userName,
+                      phoneNumber,
+                      roadAddress: form.roadAddress,
+                      detailAddress,
+                      latitude: coordinates?.latitude,
+                      longitude: coordinates?.longitude,
                   };
 
         const formData = new FormData();
-        formData.append("jsonData", new Blob([JSON.stringify(jsonData)], { type: "application/json" }));
+        {
+            type === "shop"
+                ? formData.append(
+                      "shopSignUpRequest",
+                      new Blob([JSON.stringify(jsonData)], { type: "application/json" }),
+                  )
+                : formData.append(
+                      "customerSignUpRequest",
+                      new Blob([JSON.stringify(jsonData)], { type: "application/json" }),
+                  );
+        }
         if (imageFile) formData.append("uploadPhoto", imageFile.file);
-
         postSignup(
             { type, formData },
             {
-                onSuccess: () => navigate("/"),
+                onSuccess: (response: AxiosResponse) => {
+                    const newType = response.headers["type"];
+                    authSessionStorage.set({ type: newType });
+                    navigate("/");
+                },
                 onError: (error) => console.error("Error:", error),
             },
         );

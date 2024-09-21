@@ -4,42 +4,32 @@ import styled from "styled-components";
 
 import { Text } from "@/components/common/Text";
 
-export type Item = {
-    id: number;
-    title: string;
-    storeName: string;
-    foodName: string;
-    price: number;
-    stock: number;
-    address: string;
-    imageUrl: string;
-};
+import { MainItem } from "@/types";
 
-export function FoodItemH({ item }: { item: Item }) {
+export function MainFoodItem({ item }: { item: MainItem }) {
     return (
         <Wrapper to="/detail/1">
-            <FoodImage src={item.imageUrl} alt={item.foodName} />
+            <FoodImage src={item.foodImageUrl} alt={item.title} />
+            <ShopImage src={item.shopImageUrl} alt={item.title} />
             <InfoWrapper>
                 <Info>
                     <Text size="l" weight="bold">
                         {item.title}
                     </Text>
-                    <Text size="m" weight="normal">
-                        {item.foodName}
-                    </Text>
                     <Text size="s" weight="normal">
-                        {item.storeName}
+                        {item.shopName}
                     </Text>
                     <Text size="xs" weight="normal" variant="gray">
-                        {item.address}
+                        {item.roadAddress}
                     </Text>
                     <Text size="xs" weight="normal" variant="gray">
-                        재고: {item.stock}개
+                        {item.remainingTime}
+                    </Text>
+                    <Text size="xs" weight="normal" variant="gray">
+                        {item.distance}km
                     </Text>
                 </Info>
-                <Text size="s" weight="bold">
-                    {item.price}원
-                </Text>
+                <Price>{item.price}원</Price>
             </InfoWrapper>
         </Wrapper>
     );
@@ -60,6 +50,12 @@ const Wrapper = styled(Link)`
 `;
 
 const FoodImage = styled.img`
+    width: 80px; /* 이미지 크기 고정 */
+    height: 80px; /* 이미지 높이 고정 */
+    object-fit: cover;
+    border-radius: 10px;
+`;
+const ShopImage = styled.img`
     width: 80px; /* 이미지 크기 고정 */
     height: 80px; /* 이미지 높이 고정 */
     object-fit: cover;

@@ -14,7 +14,7 @@ const postSignup = async ({ type, formData }: PostSignupProps) => {
             Authorization: `Bearer ${authSessionStorage.get()?.token}`,
         },
     });
-    return response.data;
+    return response;
 };
 
 export const usePostSignup = () => {

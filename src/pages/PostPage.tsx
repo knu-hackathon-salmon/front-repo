@@ -80,25 +80,25 @@ export default function PostPage() {
         const jsonData =
             type === "create"
                 ? {
-                      createFoodDto: {
-                          title,
-                          stock,
-                          expiration,
-                          price,
-                          content,
-                      },
+                      title,
+                      stock,
+                      expiration,
+                      price,
+                      content,
                   }
                 : {
-                      updateFoodDto: {
-                          newTitle: title,
-                          newStock: stock,
-                          newExpiration: expiration,
-                          newPrice: price,
-                          newContent: content,
-                      },
+                      newTitle: title,
+                      newStock: stock,
+                      newExpiration: expiration,
+                      newPrice: price,
+                      newContent: content,
                   };
         const formData = new FormData();
-        formData.append("jsonData", new Blob([JSON.stringify(jsonData)], { type: "application/json" }));
+        {
+            type === "create"
+                ? formData.append("createFoodDto", new Blob([JSON.stringify(jsonData)], { type: "application/json" }))
+                : formData.append("updateFoodDto", new Blob([JSON.stringify(jsonData)], { type: "application/json" }));
+        }
         imageFiles.forEach((image) => {
             formData.append("files", image.file);
         });

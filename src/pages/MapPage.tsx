@@ -2,9 +2,12 @@ import { useState } from "react";
 
 import { styled } from "styled-components";
 
-import { FoodList } from "@/components/features/FoodItem/FoodList";
 import { Map } from "@/components/features/Map";
+import { FoodList } from "@/components/features/Map/FoodList";
 
+import { BASE_URL } from "@/api/instance";
+
+import { MapItem } from "@/types";
 import { Select } from "@chakra-ui/react";
 
 interface MapPos {
@@ -14,23 +17,10 @@ interface MapPos {
     swLng: number;
 }
 
-interface FoodItem {
-    id: number;
-    title: string;
-    storeName: string;
-    foodName: string;
-    price: number;
-    stock: number;
-    address: string;
-    imageUrl: string;
-    latitude: number; // 위도 추가
-    longitude: number; // 경도 추가
-}
-
 export default function MapPage() {
     const [bounds, setBounds] = useState<MapPos | null>(null);
     const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
-    const [foodList, setFoodList] = useState<FoodItem[]>([]);
+    const [foodList, setFoodList] = useState<MapItem[]>([]);
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value === "option2") {
@@ -43,7 +33,7 @@ export default function MapPage() {
 
     const fetchNearbyFood = () => {
         if (bounds && userLocation) {
-            fetch("/api/map/near/me", {
+            fetch(`${BASE_URL}/api/food/map/near/me`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -59,30 +49,17 @@ export default function MapPage() {
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    // 응답 데이터를 FoodItem으로 변환
-                    const foodItems: FoodItem[] = data.map((item: any) => ({
+                    const foodItems: MapItem[] = data.map((item: any) => ({
                         id: item.id,
                         title: item.title,
                         storeName: item.storeName,
-                        foodName: item.foodName,
                         price: item.price,
                         stock: item.stock,
-                        address: "", // 도로명 주소는 나중에 변환
+                        roadAddress: item.roadAddress,
                         imageUrl: item.imageUrl,
-                        latitude: item.latitude, // 응답에서 위도 추가
-                        longitude: item.longitude, // 응답에서 경도 추가
+                        latitude: item.latitude,
+                        longitude: item.longitude,
                     }));
-
-                    // 도로명 주소 변환
-                    const geocoder = new kakao.maps.services.Geocoder();
-                    foodItems.forEach((item) => {
-                        const { latitude, longitude } = item; // 응답에서 위도와 경도 가져오기
-                        geocoder.coord2Address(longitude, latitude, (address: { address: any }[]) => {
-                            const getAddressName = address[0]?.address || "주소 없음";
-                            item.address = getAddressName; // 변환된 주소 저장
-                        });
-                    });
-
                     setFoodList(foodItems);
                     console.log("Food List:", foodItems);
                 })
@@ -102,7 +79,7 @@ export default function MapPage() {
                     <option value="option2">가까운 순</option>
                     <option value="option3">테스트 순</option>
                 </Select>
-                <FoodList isH={true} foodItems={foodList} />
+                <FoodList foodItems={foodList} />
             </Wrapper>
         </>
     );

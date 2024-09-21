@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -10,17 +10,25 @@ import { Paragraph } from "@/components/common/Paragraph";
 import { Text } from "@/components/common/Text";
 
 import { useDeleteFood } from "@/api/hooks/useDeleteFood";
+import { useFoodDetail } from "@/api/hooks/useGetFoodDetail";
+
+import { useAuth } from "@/provider/Auth";
 
 // import { Map } from "@/components/features/Map";
 type Props = {
     color: string;
 };
 
-export default function DetailPage(foodId: number) {
+export default function DetailPage() {
     const navigate = useNavigate();
     const [isOptionOpen, setIsOptionOpen] = useState(false);
     const { mutate: deleteFood } = useDeleteFood();
+    const { id: foodId } = useParams();
+    const { data } = useFoodDetail(Number(foodId));
 
+    const type = useAuth()?.type;
+
+    const foodData = data?.data;
     const toggleOptionModal = () => {
         setIsOptionOpen(!isOptionOpen);
     };
@@ -45,6 +53,9 @@ export default function DetailPage(foodId: number) {
             },
         });
     };
+
+    if (!foodData) return <div>데이터가 없습니다.</div>;
+
     const handleTrade = () => {};
     return (
         <>
@@ -52,31 +63,29 @@ export default function DetailPage(foodId: number) {
                 <ImageContainer>
                     <DetailHeader>
                         <BackBtn color="white" />
-                        <OptionWrapper onClick={toggleOptionModal} color="white">
-                            <HiOutlineDotsVertical size={24} />
-                            {isOptionOpen && (
-                                <>
-                                    <ModalOverlay onClick={handleCloseModal} />
-                                    <OptionModal>
-                                        <OptionItem onClick={() => handlePut(foodId, "formData")}>수정</OptionItem>
-                                        <OptionItem onClick={() => handleDelete(foodId)}>삭제</OptionItem>
-                                        <OptionItem onClick={handleTrade}>판매완료</OptionItem>
-                                    </OptionModal>
-                                </>
-                            )}
-                        </OptionWrapper>
+                        {type === "shop" ? (
+                            <OptionWrapper onClick={toggleOptionModal} color="white">
+                                <HiOutlineDotsVertical size={24} />
+                                {isOptionOpen && (
+                                    <>
+                                        <ModalOverlay onClick={handleCloseModal} />
+                                        <OptionModal>
+                                            <OptionItem onClick={() => handlePut(Number(foodId), "formData")}>
+                                                수정
+                                            </OptionItem>
+                                            <OptionItem onClick={() => handleDelete(Number(foodId))}>삭제</OptionItem>
+                                            <OptionItem onClick={handleTrade}>판매완료</OptionItem>
+                                        </OptionModal>
+                                    </>
+                                )}
+                            </OptionWrapper>
+                        ) : null}
                     </DetailHeader>
-                    <Image
-                        src="https://lh3.googleusercontent.com/p/AF1QipOOZgA-Humfn9hgkj2FWq2eAWwHCB5xmOtv1ZqN=s680-w680-h510"
-                        alt="깐양파"
-                    />
+                    <Image src={foodData.foodImages[0]} alt={foodData.title} />
                     <TitleContainer>
-                        <ShopImage
-                            src="https://lh3.googleusercontent.com/p/AF1QipOOZgA-Humfn9hgkj2FWq2eAWwHCB5xmOtv1ZqN=s680-w680-h510"
-                            alt="shopImage"
-                        />
+                        <ShopImage src={foodData.shopImageUrl} alt={foodData.shopName} />
                         <Text size="xl" weight="bold" variant="white">
-                            기황후
+                            {foodData.shopName}
                         </Text>
                     </TitleContainer>
                 </ImageContainer>
@@ -84,33 +93,32 @@ export default function DetailPage(foodId: number) {
                     <HeartContainer>
                         <FaHeart />
                         <Text size="s" weight="normal" variant="grey">
-                            28
+                            {foodData.likesCount}
                         </Text>
                     </HeartContainer>
                     <Title>
                         <Text size="l" weight="bold">
-                            깐양파 팔아요
+                            {foodData.title}
                         </Text>
                         <Text size="m" weight="bold">
-                            500원
+                            {foodData.price}원
                         </Text>
                     </Title>
                     <Text size="s" weight="normal" color="grey">
-                        가게주소 &nbsp; &nbsp;대구광역시 북구 경대로 101 1층
+                        가게주소 &nbsp; &nbsp;{foodData.roadAddress}
                         <br />
-                        운영시간 &nbsp; &nbsp;매일 10:00 - 21:00
+                        운영시간 &nbsp; &nbsp;매일 {foodData.businessHours}
                         <br />
-                        전화번호 &nbsp; &nbsp;053 - 1234- 5678
+                        전화번호 &nbsp; &nbsp;{foodData.phoneNumber}
                         <br />
                         <br />
-                        남은수량 &nbsp; &nbsp;200개
+                        남은수량 &nbsp; &nbsp;{foodData.stock}개
                         <br />
-                        유통기한 &nbsp; &nbsp;냉장보관 30일
+                        유통기한 &nbsp; &nbsp;{foodData.expiration}
                     </Text>
                     <hr className="solid" />
                     <Text size="s" weight="normal" color="grey">
-                        짜장 소스 만들 때 쓰는 깐양파를 0 하나 더 붙여서 주문해버렸습니다. 냉장보관 하시면 한달 안에
-                        드셔야 안썩습니다. 채팅주세요
+                        {foodData.content}
                     </Text>
                     <Spacing />
                     <Paragraph size="s" weight="bold">
@@ -120,13 +128,15 @@ export default function DetailPage(foodId: number) {
                     {/* <Map /> */}
                 </InfoWrapper>
             </Wrapper>
-            <ChatBtn
-                onClick={() => {
-                    navigate("/chat");
-                }}
-            >
-                채팅하기
-            </ChatBtn>
+            {type === "customer" ? (
+                <ChatBtn
+                    onClick={() => {
+                        navigate("/chat");
+                    }}
+                >
+                    채팅하기
+                </ChatBtn>
+            ) : null}
         </>
     );
 }
