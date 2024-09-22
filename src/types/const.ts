@@ -1,0 +1,61 @@
+import { MapItem } from ".";
+
+export const mapList: MapItem[] = [
+    {
+        id: 1,
+        title: "떡볶이 잘하는집 어묵",
+        storeName: "떡볶이명가",
+        price: 2000,
+        stock: 20,
+        roadAddress: "대구 북구 대학로 16",
+        latitude: 35.123456,
+        longitude: 128.123456,
+        imageUrl:
+            "https://i.namu.wiki/i/k3D-i9zJ9AXSgm8N4ijM4UIQzxnj62tPNBra5YMC_2ZKN0ydzoaZ4C00IhVhPLjGtRaKUac1wO_eGq9Oxa2wtA.webp",
+    },
+    {
+        id: 2,
+        title: "김밥 김 사세요~",
+        storeName: "김밥천국 대구점",
+        price: 10,
+        stock: 15,
+        roadAddress: "대구 중구 중앙대로 100",
+        latitude: 35.123789,
+        longitude: 128.123789,
+        imageUrl:
+            "https://thumbnail6.coupangcdn.com/thumbnails/remote/230x230ex/image/vendor_inventory/0101/e78534599fb8851fe817bb42c9d832c2316bdc507e63b2f3025a43162c75.jpg",
+    },
+    {
+        id: 3,
+        title: "직접 빻은 마늘 드려요",
+        storeName: "닭갈비의 명소",
+        price: 1000,
+        stock: 30,
+        roadAddress: "대구 동구 신천동 10",
+        latitude: 35.987654,
+        longitude: 128.987654,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRteL4z0ZkyVnyY_zum9j24-g7DfYyOrshhHA&s",
+    },
+    {
+        id: 4,
+        title: "쪽파 썰은거 남네요",
+        storeName: "일본라멘 전문점",
+        price: 700,
+        stock: 25,
+        roadAddress: "대구 수성구 수성로 45",
+        latitude: 35.56789,
+        longitude: 128.56789,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDDeYDnZEGRrIEGXuNgMlEwLBnbD1q4eq1xw&s",
+    },
+    {
+        id: 5,
+        title: "밀가루 필요하신분",
+        storeName: "천국의 피자",
+        price: 2000,
+        stock: 10,
+        roadAddress: "대구 달서구 월배로 77",
+        latitude: 35.246813,
+        longitude: 128.246813,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgDThuogEHHl6bOHT982JmMrPAA4Sbf6C5bg&s",
+    },
+];
