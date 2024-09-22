@@ -2,11 +2,11 @@ import { useState } from "react";
 import { FaRegUser } from "react-icons/fa6";
 import { PiHouseBold } from "react-icons/pi";
 import { RiMapPinLine } from "react-icons/ri";
-import { Link, LinkProps } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import styled from "styled-components";
 
-interface NavLinkProps extends LinkProps {
+interface NavLinkProps {
     isActive: boolean;
 }
 

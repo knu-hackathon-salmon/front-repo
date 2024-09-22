@@ -1,12 +1,12 @@
 import { Navigate } from "react-router-dom";
 
-import { useAuth } from "@/provider/Auth";
+import { authSessionStorage } from "@/utils/storage";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-    const authInfo = useAuth();
+    const auth = authSessionStorage.get();
 
-    if (!authInfo || !authInfo.token) {
-        console.log(authInfo);
+    if (!auth) {
+        console.log("authInfo", auth);
         return <Navigate to="/sign-in" />;
     }
 

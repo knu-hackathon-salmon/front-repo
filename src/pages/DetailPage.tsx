@@ -45,8 +45,8 @@ export default function DetailPage() {
 
         deleteFood(foodId, {
             onSuccess: () => {
-                const isConfirm = window.confirm("삭제하시겠습니까?");
-                if (!isConfirm) return;
+                alert("삭제되었습니다.");
+                navigate("/");
             },
             onError: (error) => {
                 console.error("Error:", error);
@@ -62,9 +62,9 @@ export default function DetailPage() {
             <Wrapper>
                 <ImageContainer>
                     <DetailHeader>
-                        <BackBtn color="white" />
-                        {type === "shop" ? (
-                            <OptionWrapper onClick={toggleOptionModal} color="white">
+                        <BackBtn color="black" />
+                        {type === "SHOP" ? (
+                            <OptionWrapper onClick={toggleOptionModal} color="black">
                                 <HiOutlineDotsVertical size={24} />
                                 {isOptionOpen && (
                                     <>
@@ -120,12 +120,12 @@ export default function DetailPage() {
                     <Text size="s" weight="normal" color="grey">
                         {foodData.content}
                     </Text>
-                    <Spacing />
+                    {/* <Spacing />
                     <Paragraph size="s" weight="bold">
                         찾아가는 길
                     </Paragraph>
                     <Spacing />
-                    {/* <Map /> */}
+                    <Map /> */}
                 </InfoWrapper>
             </Wrapper>
             {type === "customer" ? (

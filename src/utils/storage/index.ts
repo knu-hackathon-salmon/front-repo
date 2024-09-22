@@ -20,9 +20,8 @@ const initStorage = <T extends keyof StorageKey>(key: T, storage: Storage) => {
 };
 
 export const authSessionStorage = initStorage("token", sessionStorage);
+export const typeSessionStorage = initStorage("type", sessionStorage);
 interface StorageKey {
-    token?: {
-        token?: string;
-        type?: string;
-    };
+    token?: string;
+    type?: string;
 }

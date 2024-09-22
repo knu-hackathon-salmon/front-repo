@@ -5,13 +5,17 @@ import { QueryClient } from "@tanstack/react-query";
 
 const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
     const instance = axios.create({
-        timeout: 5000,
+        timeout: 20000,
         ...config,
         headers: {
-            Accept: "application/json",
             "Content-Type": "application/json",
             ...config.headers,
         },
+        withCredentials: true,
+        // proxy: {
+        //     host: "35.184.36.31",
+        //     port: 8080,
+        // },
     });
     axios.defaults.withCredentials = true;
     instance.interceptors.response.use(
@@ -21,7 +25,7 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
 
             if (error.response && error.response.status === 401) {
                 try {
-                    const refreshResponse = await instance.get(`${BASE_URL}/api/jwt/access-token`, {
+                    const refreshResponse = await instance.get(`${BASE_URL}/api/jwt/reissue`, {
                         withCredentials: true,
                     });
                     console.log(refreshResponse.data);

@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { styled } from "styled-components";
 
+import { BackBtn } from "@/components/common/BackBtn";
 import { Text } from "@/components/common/Text";
 
 import { usePostFood } from "@/api/hooks/usePostFood";
@@ -20,9 +21,9 @@ export default function PostPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [imageFiles, setImageFiles] = useState<UploadImage[]>([]);
     const [title, setTitle] = useState("");
-    const [stock, setStock] = useState(0);
+    const [stock, setStock] = useState<number | null>(null);
     const [expiration, setExpiration] = useState("");
-    const [price, setPrice] = useState(0);
+    const [price, setPrice] = useState<number | null>(null);
     const [content, setContent] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
@@ -66,7 +67,7 @@ export default function PostPage() {
             );
         }
         return imageFiles.map((image, index) => (
-            <ShowFileWapper>
+            <ShowFileWapper key={index}>
                 <ShowFileImage key={index} src={image.thumbnail} alt={image.type} onClick={handleClickFileInput} />
                 <ShowFileDeleteBtn type="button" onClick={() => removeImg(index)}>
                     <IoMdClose size={24} />
@@ -100,9 +101,12 @@ export default function PostPage() {
                 : formData.append("updateFoodDto", new Blob([JSON.stringify(jsonData)], { type: "application/json" }));
         }
         imageFiles.forEach((image) => {
-            formData.append("files", image.file);
+            formData.append("images", image.file);
         });
-
+        console.log("formData", formData);
+        formData.forEach((value, key) => {
+            console.log(key, value);
+        });
         if (type === "create") {
             postFood(formData, {
                 onSuccess: () => navigate("/"),
@@ -121,6 +125,9 @@ export default function PostPage() {
 
     return (
         <PostContainer>
+            <DetailHeader>
+                <BackBtn color="black" />
+            </DetailHeader>
             <Text size="s" weight="bold">
                 상품 사진
             </Text>
@@ -155,8 +162,10 @@ export default function PostPage() {
                     <InputField
                         type="number"
                         placeholder="판매 가격"
-                        value={type === "create" ? price : prevformData.price}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPrice(Number(e.target.value))}
+                        value={price !== null ? price : ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setPrice(e.target.value ? Number(e.target.value) : null)
+                        }
                         required
                     />
                 </InputWrapper>
@@ -167,8 +176,10 @@ export default function PostPage() {
                     <InputField
                         type="number"
                         placeholder="재고 수량"
-                        value={type === "create" ? stock : prevformData.stock}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStock(Number(e.target.value))}
+                        value={stock !== null ? stock : ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setStock(e.target.value ? Number(e.target.value) : null)
+                        }
                         required
                     />
                 </InputWrapper>
@@ -205,6 +216,10 @@ export default function PostPage() {
 
 const PostContainer = styled.div`
     width: 80%;
+`;
+const DetailHeader = styled.div`
+    z-index: 10;
+    width: 100%;
 `;
 const Form = styled.form`
     display: flex;

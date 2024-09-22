@@ -4,8 +4,8 @@ import { FcGoogle } from "react-icons/fc";
 
 import { styled } from "styled-components";
 
+import Image from "@/assets/Foonabada.png";
 import Kakao from "@/assets/kakao.png";
-import Image from "@/assets/logo.png";
 
 export default function LoginPage() {
     //test용 무적 토큰
@@ -30,7 +30,7 @@ export default function LoginPage() {
                     <FcGoogle />
                     <span>Google 계정으로 로그인</span>
                 </Button>
-                <Button onClick={() => (window.location.href = "http://35.184.36.31/oauth2/authorization/kakao")}>
+                <Button onClick={() => (window.location.href = "http://35.184.36.31:8080/oauth2/authorization/kakao")}>
                     <KakaoLogo src={Kakao} alt="Kakao 로그인" />
                 </Button>
             </ButtonContainer>

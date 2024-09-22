@@ -16,7 +16,6 @@ const Wrapper = styled.div`
     display: flex;
     gap: 10px;
     overflow: hidden;
-    flex-direction: column;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
