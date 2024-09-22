@@ -9,7 +9,7 @@ const getMainFood = async (latitude: number, longitude: number): Promise<FoodMai
         `${BASE_URL}/api/food/main/overview?latitude=${latitude}&longitude=${longitude}`,
         {
             headers: {
-                Authorization: `Bearer ${authSessionStorage.get()?.token}`,
+                Authorization: `Bearer ${authSessionStorage.get()}`,
             },
         },
     );

@@ -20,13 +20,10 @@ export default function TempPage() {
             onSuccess: (response: AxiosResponse) => {
                 const token = response.headers["authorization"];
                 console.log("Authorization token:", token);
-                authSessionStorage.set({
-                    token: token,
-                    type: "",
-                });
+                authSessionStorage.set(token);
                 console.log("여기는됨");
                 navigate("/select");
-                console.log("여기는됨22");
+                console.log("여기는됨22", authSessionStorage.get());
             },
             onError: (error) => {
                 console.error("Error occurred during request:", error);

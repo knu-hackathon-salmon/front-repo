@@ -58,9 +58,9 @@ export interface MainItem {
 
 export interface FoodMainOverviewResponse {
     data: {
-        additionalProp1: MainItem[];
-        additionalProp2: MainItem[];
-        additionalProp3: MainItem[];
+        latestData: MainItem[];
+        mostLikedData: MainItem[];
+        nearestData: MainItem[];
     };
 }
 
@@ -83,6 +83,9 @@ export interface PostFoodDetailResponse {
     };
 }
 export interface WishItem {
+    myNickName: string;
+    myEmail: string;
+    myImageUrl: string;
     id: number;
     title: string;
     storeName: string;
@@ -96,4 +99,30 @@ export interface WishItem {
 }
 export interface GetWishListResponse {
     data: WishItem;
+}
+export interface TradeItem {
+    myStoreName: string;
+    myEmail: string;
+    myImageUrl: string;
+    id: number;
+    title: string;
+    storeName: string;
+    price: number;
+    stock: number;
+    latitude: number;
+    longitude: number;
+    imageUrl: string;
+    roadAddress: string;
+    trading: boolean;
+}
+export interface GetTradeResponse {
+    data: TradeItem;
+}
+export interface UserInfo {
+    myName: string;
+    myEmail: string;
+    myImageUrl: string;
+}
+export interface GetUserInfoResponse {
+    data: UserInfo;
 }

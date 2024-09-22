@@ -11,7 +11,7 @@ const postSignup = async ({ type, formData }: PostSignupProps) => {
     const response = await fetchInstance.post(`${BASE_URL}/api/member/${type}/sign-up`, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${authSessionStorage.get()?.token}`,
+            Authorization: `Bearer ${authSessionStorage.get()}`,
         },
     });
     return response;

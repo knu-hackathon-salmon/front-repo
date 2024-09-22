@@ -20,5 +20,6 @@ const Head = styled.header`
     color: #1ca673;
     background-color: white;
     font-weight: bolder;
+    font-size: 18px;
     z-index: 1000;
 `;

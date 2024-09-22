@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { IoSearchSharp } from "react-icons/io5";
+import { FaPencil } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -8,89 +8,57 @@ import { MainFoodList } from "@/components/features/Main/MainFoodList";
 
 import { useGetMainFood } from "@/api/hooks/useGetMainFood";
 
+import { useAuth } from "@/provider/Auth";
+
 export default function MainPage() {
-    const [input, setInput] = useState<string>("");
     const { data, isLoading, error } = useGetMainFood(37.7749, -122.4194);
+    const type = useAuth()?.type;
 
     const foodData = data?.data;
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInput(e.target.value);
-    };
-
+    const navigate = useNavigate();
     if (isLoading) return <p>Loading...</p>;
     if (!foodData || error) return <p>Error loading food data!</p>;
+    console.log(foodData);
+
+    const handleCreateFood = () => {
+        navigate("/post", {
+            state: { type: "create" },
+        });
+    };
     return (
         <>
-            <SearchBarWrapper>
-                <SearchBar placeholder="키워드를 입력해주세요!" value={input} onChange={handleChange} />
-                <SearchIcon />
-            </SearchBarWrapper>
             <Wrapper>
                 <Text size="m" weight="bold">
                     지금 구매해야 하는 <span className="emph">마지막</span> 상품!
                 </Text>
-                {data && <MainFoodList foodItems={foodData.additionalProp1} />}
+                {foodData && <MainFoodList foodItems={foodData.latestData} />}
                 <Spacing />
                 <Text size="m" weight="bold">
                     <span className="emph">방금</span> 등록된 상품!
                 </Text>
-                {data && <MainFoodList foodItems={foodData.additionalProp2} />}
+                {foodData && <MainFoodList foodItems={foodData.mostLikedData} />}
                 <Spacing />
                 <Text size="m" weight="bold">
                     지금 <span className="emph">핫</span>한 상품!
                 </Text>
-                {data && <MainFoodList foodItems={foodData.additionalProp3} />}
+                {foodData && <MainFoodList foodItems={foodData.nearestData} />}
                 <Spacing />
+                {type === "SHOP" ? (
+                    <AddBtn onClick={() => handleCreateFood()}>
+                        <FaPencil size={30} />
+                    </AddBtn>
+                ) : null}
             </Wrapper>
         </>
     );
 }
-const SearchBarWrapper = styled.div`
-    position: relative;
-    width: 90%;
-
-    svg {
-        cursor: pointer;
-    }
-`;
-const SearchBar = styled.input`
-    box-sizing: border-box;
-
-    display: block;
-    margin: 15px 0px;
-
-    border-radius: 15px;
-    border: 1px solid #1ca673;
-    padding: 0px 10px;
-
-    width: 100%;
-    height: 50px;
-
-    color: #1ca673;
-
-    &::placeholder {
-        color: #78c1a7;
-        font-size: 14px;
-    }
-
-    &:focus {
-        outline: 1.5px solid #1ca673;
-    }
-`;
-
-const SearchIcon = styled(IoSearchSharp)`
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    color: #1ca673;
-`;
 
 const Wrapper = styled.div`
     width: 90%;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin: 20px 0px;
     .emph {
         color: #1ca673;
         font-weight: bolders;
@@ -100,4 +68,17 @@ const Wrapper = styled.div`
 const Spacing = styled.div`
     width: 100%;
     height: 20px;
+`;
+const AddBtn = styled.button`
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    z-index: 1000;
+    padding: 8px;
+    border: 1px solid#1ca673;
+    border-radius: 50%;
+    background-color: #ecf5ef;
+    svg {
+        color: #1ca673;
+    }
 `;

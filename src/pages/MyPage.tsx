@@ -5,47 +5,60 @@ import { styled } from "styled-components";
 import { Text } from "@/components/common/Text";
 import { FoodList } from "@/components/features/Map/FoodList";
 
+import { useGetUserInfo } from "@/api/hooks/useGeUserInfo";
+import { useGetTrade } from "@/api/hooks/useGetTrade";
 import { useGetWishList } from "@/api/hooks/useGetWishList";
 
 import { useAuth } from "@/provider/Auth";
-import { WishItem } from "@/types";
+import { TradeItem, WishItem } from "@/types";
 
 interface TabButtonProps {
     isActive: boolean;
 }
 
 export default function MyPage() {
-    {
-        /*유저정보를 받아서 구매자인지 판매자인지 구분하는 코드*/
-    }
-    const type = useAuth()?.type;
+    const type = useAuth()?.type as string;
+    const userType = type ? type.toLowerCase() : "default_type";
 
-    const [activeTab, setActiveTab] = useState("first");
-    const { data } = useGetWishList();
+    const [activeTab, setActiveTab] = useState(type === "SHOP" ? "first" : "wish");
 
-    const wishList: WishItem[] = (data?.data || []) as WishItem[];
+    const { data: tradeListData } = type === "SHOP" ? useGetTrade() : { data: undefined };
+    const { data: userData } = useGetUserInfo(userType);
+    const { data: wishListData } = type === "CUSTOMER" ? useGetWishList() : { data: undefined };
 
+    const tradeList: TradeItem[] = (tradeListData?.data || []) as TradeItem[];
+    const wishList: WishItem[] = (wishListData?.data || []) as WishItem[];
+    const userInfo = userData?.data;
+    //chatList 추가 필요
+
+    const renderContent = () => {
+        if (activeTab === "first" && type === "SHOP") {
+            return tradeList.length > 0 ? <FoodList foodItems={tradeList} /> : <NoData>판매 내역이 없습니다.</NoData>;
+        } else if (activeTab === "wish" && type === "CUSTOMER") {
+            return wishList.length > 0 ? <FoodList foodItems={wishList} /> : <NoData>찜 목록이 없습니다.</NoData>;
+        } else if (activeTab === "chat") {
+            return <NoData>채팅 목록이 없습니다.</NoData>;
+        }
+        return null;
+    };
+    console.log(tradeList[0]);
     return (
         <>
             <InfoWrapper>
                 <UserInfo>
                     <UserImage>
-                        <Image
-                            src={
-                                "https://lh3.googleusercontent.com/p/AF1QipOOZgA-Humfn9hgkj2FWq2eAWwHCB5xmOtv1ZqN=s680-w680-h51"
-                            }
-                        />
+                        <Image src={userInfo?.myImageUrl} />
                     </UserImage>
                     <Text size="s" weight="bold">
-                        규라일리
+                        {userInfo?.myName}
                     </Text>
                     <Text size="s" weight="bold">
-                        @gyul
+                        {userInfo?.myEmail}
                     </Text>
                 </UserInfo>
             </InfoWrapper>
             <TabMenu>
-                {type === "shop" ? (
+                {type === "SHOP" ? (
                     <TabButton isActive={activeTab === "first"} onClick={() => setActiveTab("first")}>
                         판매 목록
                     </TabButton>
@@ -59,18 +72,17 @@ export default function MyPage() {
                 </TabButton>
             </TabMenu>
 
-            <ListWrapper>
-                {activeTab === "first" ? (
-                    <FoodList foodItems={wishList} />
-                ) : activeTab === "wish" ? (
-                    <FoodList foodItems={wishList} />
-                ) : (
-                    <FoodList foodItems={wishList} />
-                )}
-            </ListWrapper>
+            <ListWrapper>{renderContent()}</ListWrapper>
         </>
     );
 }
+
+const NoData = styled.div`
+    text-align: center;
+    margin-top: 20px;
+    font-size: 16px;
+    color: #888;
+`;
 
 const InfoWrapper = styled.div`
     display: flex;

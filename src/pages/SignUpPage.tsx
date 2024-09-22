@@ -11,7 +11,7 @@ import DaumPost from "@/components/features/SignUp/DaumPost";
 import { useGetCoordinates } from "@/api/hooks/useGetCoordinates";
 import { usePostSignup } from "@/api/hooks/usePostSignup";
 
-import { authSessionStorage } from "@/utils/storage";
+import { authSessionStorage, typeSessionStorage } from "@/utils/storage";
 
 import { UploadImage, postCode } from "@/types";
 
@@ -110,7 +110,9 @@ export default function SignUpPage() {
             {
                 onSuccess: (response: AxiosResponse) => {
                     const newType = response.headers["type"];
-                    authSessionStorage.set({ type: newType });
+                    console.log("헤더에잇는type", newType);
+                    typeSessionStorage.set(newType);
+                    console.log("authSessionStorage", authSessionStorage);
                     navigate("/");
                 },
                 onError: (error) => console.error("Error:", error),

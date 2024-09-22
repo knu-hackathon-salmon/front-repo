@@ -9,7 +9,7 @@ export const getFoodDetailPath = (foodId: string) => `${BASE_URL}/api/food/detai
 export const getFoodDetail = async (foodId: number): Promise<PostFoodDetailResponse> => {
     const response = await fetchInstance.get<PostFoodDetailResponse>(getFoodDetailPath(foodId.toString()), {
         headers: {
-            Authorization: `Bearer ${authSessionStorage.get()?.token}`,
+            Authorization: `Bearer ${authSessionStorage.get()}`,
         },
     });
     return response.data;

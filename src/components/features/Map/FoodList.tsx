@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
 import { FoodItem } from "./FoodItem";
-import { MapItem, WishItem } from "@/types";
+import { MapItem, TradeItem, WishItem } from "@/types";
 
 type FoodListProps = {
-    foodItems: (MapItem | WishItem)[];
+    foodItems: (MapItem | WishItem | TradeItem)[];
 };
 
 export function FoodList({ foodItems }: FoodListProps) {
