@@ -28,7 +28,6 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
                     const refreshResponse = await instance.get(`${BASE_URL}/api/jwt/reissue`, {
                         withCredentials: true,
                     });
-                    console.log(refreshResponse.data);
 
                     return instance(originalRequest); // 재요청
                 } catch (refreshError) {

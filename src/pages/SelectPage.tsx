@@ -5,6 +5,9 @@ import { styled } from "styled-components";
 
 import { Text } from "@/components/common/Text";
 
+import Customer from "@/assets/customer.png";
+import Shop from "@/assets/shop.png";
+
 export default function SelectPage() {
     const [type, setType] = useState("");
     const navigate = useNavigate();
@@ -36,7 +39,10 @@ export default function SelectPage() {
                     value="customer"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setType(e.target.value)}
                 />
-                <label htmlFor="customer">구매자예요</label>
+                <label htmlFor="customer">
+                    <Logo src={Customer} alt="customer" />
+                    구매자예요
+                </label>
             </RadioWrapper>
             <RadioWrapper>
                 <input
@@ -46,7 +52,10 @@ export default function SelectPage() {
                     value="shop"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setType(e.target.value)}
                 />
-                <label htmlFor="shop">판매자예요</label>
+                <label htmlFor="shop">
+                    <Logo src={Shop} alt="shop" />
+                    판매자예요
+                </label>
             </RadioWrapper>
             <NextBtn onClick={handleType}>다음</NextBtn>
         </SelectWrapper>
@@ -58,6 +67,9 @@ const SelectWrapper = styled.div`
     span {
         display: block;
     }
+`;
+const Logo = styled.img`
+    width: 100px;
 `;
 const NextBtn = styled.button`
     width: 80%;
@@ -81,11 +93,16 @@ const RadioWrapper = styled.div`
         display: none;
     }
     label {
-        display: block;
+        display: flex;
+        flex-direction: column;
         border-radius: 10px;
-        align-content: center;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
         height: -webkit-fill-available;
         line-height: 45px;
+        font-weight: bold;
+        font-size: 18px;
     }
     input[type="radio"]:checked + label {
         background: #e1f3e8;

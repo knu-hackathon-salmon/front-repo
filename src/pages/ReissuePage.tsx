@@ -20,12 +20,9 @@ export default function ReissuePage() {
                         withCredentials: true,
                     });
 
-                    console.log("Response Status:", response.status);
                     const accessToken = response.headers["authorization"];
-                    console.log("Access Token:", accessToken);
 
                     if (response.status === 200) {
-                        console.log("Response Body:", response.data);
                         const type = response.headers["type"] ?? undefined;
 
                         if (accessToken) {
@@ -34,8 +31,6 @@ export default function ReissuePage() {
                             navigate("/");
                         }
                     } else if (response.status === 201) {
-                        console.log("Response Body:", response.data);
-
                         if (accessToken) {
                             authSessionStorage.set(accessToken);
                             navigate("/select");

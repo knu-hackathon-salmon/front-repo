@@ -15,15 +15,11 @@ export default function TempPage() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Submitting email:", email);
         postTemp(email, {
             onSuccess: (response: AxiosResponse) => {
                 const token = response.headers["authorization"];
-                console.log("Authorization token:", token);
                 authSessionStorage.set(token);
-                console.log("여기는됨");
                 navigate("/select");
-                console.log("여기는됨22", authSessionStorage.get());
             },
             onError: (error) => {
                 console.error("Error occurred during request:", error);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,12 +6,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { BackBtn } from "@/components/common/BackBtn";
-import { Paragraph } from "@/components/common/Paragraph";
+// import { Paragraph } from "@/components/common/Paragraph";
 import { Text } from "@/components/common/Text";
 
 import { useDeleteFood } from "@/api/hooks/useDeleteFood";
 import { useFoodDetail } from "@/api/hooks/useGetFoodDetail";
 
+// import { usePostTradeOff } from "@/api/hooks/usePostTradeOff";
+// import { usePostTradeOn } from "@/api/hooks/usePostTradeOn";
 import { useAuth } from "@/provider/Auth";
 
 // import { Map } from "@/components/features/Map";
@@ -22,21 +24,69 @@ type Props = {
 export default function DetailPage() {
     const navigate = useNavigate();
     const [isOptionOpen, setIsOptionOpen] = useState(false);
+
     const { mutate: deleteFood } = useDeleteFood();
+    // const { mutate: postTradeOff } = usePostTradeOff();
+    // const { mutate: postTradeOn } = usePostTradeOn();
     const { id: foodId } = useParams();
     const { data } = useFoodDetail(Number(foodId));
 
     const type = useAuth()?.type;
 
     const foodData = data?.data;
+    const [trading, setTrading] = useState(foodData?.trading ? "on" : "off");
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+    useEffect(() => {
+        if (foodData?.trading !== undefined) {
+            setTrading(foodData.trading ? "on" : "off");
+        }
+    }, [foodData?.trading]);
+
+    const updateCurrentIndex = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const index = slideRefs.current.indexOf(entry.target as HTMLDivElement);
+                if (index !== -1) {
+                    setCurrentIndex(index);
+                }
+            }
+        });
+    };
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(updateCurrentIndex, {
+            root: null,
+            threshold: 0.5,
+        });
+        slideRefs.current.forEach((slide) => {
+            slide && observer.observe(slide);
+        });
+
+        return () => {
+            slideRefs.current.forEach((slide) => {
+                slide && observer.unobserve(slide);
+            });
+        };
+    }, [updateCurrentIndex]);
+
+    const formData = {
+        title: foodData?.title,
+        stock: foodData?.stock,
+        expiration: foodData?.expiration,
+        price: foodData?.price,
+        content: foodData?.content,
+    };
     const toggleOptionModal = () => {
         setIsOptionOpen(!isOptionOpen);
     };
     const handleCloseModal = () => {
         setIsOptionOpen(false);
     };
-    const handlePut = (foodId: number, formData: string) => {
-        navigate("/post", { state: { foodId: foodId, prevformData: formData } });
+    const handlePut = (foodId: number, formData: object) => {
+        navigate("/post", { state: { foodId: foodId, prevformData: formData, type: "update" } });
     };
 
     const handleDelete = (foodId: number) => {
@@ -48,15 +98,43 @@ export default function DetailPage() {
                 alert("삭제되었습니다.");
                 navigate("/");
             },
-            onError: (error) => {
+            onError: (error: any) => {
                 console.error("Error:", error);
+                const errorMessage = error.response?.data?.message;
+                alert(errorMessage);
             },
         });
     };
 
     if (!foodData) return <div>데이터가 없습니다.</div>;
 
-    const handleTrade = () => {};
+    const handleTrade = () => {
+        if (trading === "on") {
+            alert("판매완료 되었습니다.");
+            setTrading("off");
+            // postTradeOff(foodId, {
+            //     onSuccess: () => {
+            //         alert("판매완료 되었습니다.");
+            //         setTrading("off");
+            //     },
+            //     onError: (error) => {
+            //         console.error("Error:", error);
+            //     },
+            // });
+        } else {
+            alert("판매중으로 변경되었습니다.");
+            setTrading("on");
+            // postTradeOn(foodId, {
+            //     onSuccess: () => {
+            //         alert("변경되었습니다.");
+            //         setTrading("on");
+            //     },
+            //     onError: (error) => {
+            //         console.error("Error:", error);
+            //     },
+            // });
+        }
+    };
     return (
         <>
             <Wrapper>
@@ -70,18 +148,29 @@ export default function DetailPage() {
                                     <>
                                         <ModalOverlay onClick={handleCloseModal} />
                                         <OptionModal>
-                                            <OptionItem onClick={() => handlePut(Number(foodId), "formData")}>
+                                            <OptionItem onClick={() => handlePut(Number(foodId), formData)}>
                                                 수정
                                             </OptionItem>
                                             <OptionItem onClick={() => handleDelete(Number(foodId))}>삭제</OptionItem>
-                                            <OptionItem onClick={handleTrade}>판매완료</OptionItem>
+                                            <OptionItem onClick={() => handleTrade()}>
+                                                {trading === "on" ? "판매중" : "판매완료"}
+                                            </OptionItem>
                                         </OptionModal>
                                     </>
                                 )}
                             </OptionWrapper>
                         ) : null}
                     </DetailHeader>
-                    <Image src={foodData.foodImages[0]} alt={foodData.title} />
+                    <ImgWrapper>
+                        {foodData.foodImages.map((src, index) => {
+                            return (
+                                <ImageContainerDiv>
+                                    <Image key={index} src={src} ref={(el) => (slideRefs.current[index] = el)} />
+                                </ImageContainerDiv>
+                            );
+                        })}
+                    </ImgWrapper>
+                    <GradientOverlay />
                     <TitleContainer>
                         <ShopImage src={foodData.shopImageUrl} alt={foodData.shopName} />
                         <Text size="xl" weight="bold" variant="white">
@@ -89,6 +178,11 @@ export default function DetailPage() {
                         </Text>
                     </TitleContainer>
                 </ImageContainer>
+                <DotWrapper>
+                    {foodData.foodImages.map((_, index) => (
+                        <Dot key={index} active={index === currentIndex} />
+                    ))}
+                </DotWrapper>
                 <InfoWrapper>
                     <HeartContainer>
                         <FaHeart />
@@ -128,7 +222,7 @@ export default function DetailPage() {
                     <Map /> */}
                 </InfoWrapper>
             </Wrapper>
-            {type === "customer" ? (
+            {type === "CUSTOMER" ? (
                 <ChatBtn
                     onClick={() => {
                         navigate("/chat");
@@ -144,19 +238,37 @@ const Wrapper = styled.div`
     width: 100%;
 `;
 const ImageContainer = styled.div`
+    position: relative;
+    overflow: hidden;
+`;
+const ImageContainerDiv = styled.div`
+    flex: 0 0 100%; /* 이미지 컨테이너가 화면 너비만큼 차지 */
+    scroll-snap-align: center; /* 스크롤 시 중앙 정렬 */
+`;
+const ImgWrapper = styled.div`
     width: 100%;
     height: 330px;
-    position: relative;
-    &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%);
-        z-index: 1;
+    overflow: hidden;
+
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
     }
+`;
+const GradientOverlay = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%);
+    z-index: 9;
+    pointer-events: none;
 `;
 const DetailHeader = styled.div`
     position: absolute;
@@ -166,6 +278,22 @@ const DetailHeader = styled.div`
     display: flex;
     justify-content: space-between;
     width: 100%;
+`;
+const DotWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+`;
+
+const Dot = styled.div<{ active: boolean }>`
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: ${({ active }) => (active ? "#1ca673" : "#dddddd")};
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
 `;
 
 const HeartContainer = styled.div`
@@ -182,6 +310,7 @@ const Image = styled.img`
     height: 100%;
     object-fit: cover;
     z-index: 0;
+    scroll-snap-align: center;
 `;
 const TitleContainer = styled.div`
     position: absolute;
@@ -200,7 +329,7 @@ const ShopImage = styled.img`
     aspect-ratio: 1 / 1;
 `;
 const InfoWrapper = styled.div`
-    padding: 30px 30px 120px;
+    padding: 10px 30px 120px;
     .solid {
         margin: 20px 0px;
     }
@@ -233,10 +362,10 @@ const ChatBtn = styled.button`
 
     z-index: 9;
 `;
-const Spacing = styled.div`
-    width: 100%;
-    height: 40px;
-`;
+// const Spacing = styled.div`
+//     width: 100%;
+//     height: 40px;
+// `;
 const OptionWrapper = styled.button<Props>`
     background: none;
     border: none;

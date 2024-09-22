@@ -1,17 +1,13 @@
 import styled from "styled-components";
 
-import { FoodItem } from "./FoodItem";
-import { MapItem, TradeItem, WishItem } from "@/types";
+import { ChatItem } from "./ChatItem";
+import { ChatItemData } from "@/types";
 
-type FoodListProps = {
-    foodItems: (MapItem | WishItem | TradeItem)[];
-};
-
-export function FoodList({ foodItems }: FoodListProps) {
+export function ChatList({ chatItems }: { chatItems: ChatItemData[] }) {
     return (
         <Wrapper>
-            {foodItems.map((item) => {
-                return <FoodItem key={item.id} item={item} />;
+            {chatItems.map((item) => {
+                return <ChatItem key={item.chatId} item={item} />;
             })}
         </Wrapper>
     );

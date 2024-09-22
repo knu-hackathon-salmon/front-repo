@@ -30,8 +30,8 @@ export default function DaumPost(props: any) {
     return (
         <DaumPostBackground>
             <DaumPostContainer>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <h1 style={{ color: "#fff", height: "50px", width: "500px" }}>주소 검색</h1>
+                <div style={{ display: "flex", justifyContent: "space-between", width: "80%" }}>
+                    <h1 style={{ color: "#fff", height: "50px" }}>주소 검색</h1>
                     <IoMdClose
                         onClick={() => {
                             props.handleComplete();
@@ -41,8 +41,7 @@ export default function DaumPost(props: any) {
                 <DaumPostcode
                     autoClose
                     style={{
-                        height: "500px",
-                        width: "500px",
+                        width: "80%",
                     }}
                     onComplete={complete}
                 />
@@ -61,9 +60,10 @@ const DaumPostBackground = styled.div`
 `;
 
 const DaumPostContainer = styled.div`
-    width: 500px;
+    width: 100%;
     position: absolute;
-    left: 50%;
+    left: 60%;
     top: 50%;
     transform: translate(-50%, -50%);
+    margin: 0 auto;
 `;

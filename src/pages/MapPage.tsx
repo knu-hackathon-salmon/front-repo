@@ -7,6 +7,8 @@ import { FoodList } from "@/components/features/Map/FoodList";
 
 import { BASE_URL } from "@/api/instance";
 
+import { authSessionStorage } from "@/utils/storage";
+
 import { MapItem } from "@/types";
 import { Select } from "@chakra-ui/react";
 
@@ -24,7 +26,6 @@ export default function MapPage() {
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value === "option2") {
-            console.log("가까운순 버튼 클릭!");
             console.log("Bounds:", bounds);
             console.log("User Location:", userLocation);
             fetchNearbyFood();
@@ -37,6 +38,7 @@ export default function MapPage() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${authSessionStorage.get()}`,
                 },
                 body: JSON.stringify({
                     neLat: bounds.neLat,
@@ -47,21 +49,14 @@ export default function MapPage() {
                     userLon: userLocation.lon,
                 }),
             })
-                .then((response) => response.json())
+                .then((response) => {
+                    return response.json();
+                })
                 .then((data) => {
-                    const foodItems: MapItem[] = data.map((item: any) => ({
-                        id: item.id,
-                        title: item.title,
-                        storeName: item.storeName,
-                        price: item.price,
-                        stock: item.stock,
-                        roadAddress: item.roadAddress,
-                        imageUrl: item.imageUrl,
-                        latitude: item.latitude,
-                        longitude: item.longitude,
-                    }));
-                    setFoodList(foodItems);
-                    console.log("Food List:", foodItems);
+                    console.log("API Response:", data);
+
+                    setFoodList(data);
+                    console.log("Food List:", foodList);
                 })
                 .catch((error) => console.error("Error fetching data:", error));
         } else {
@@ -71,13 +66,19 @@ export default function MapPage() {
 
     return (
         <>
-            <Map setBounds={setBounds} setUserLocation={setUserLocation} />
+            <Map
+                bounds={bounds}
+                setBounds={setBounds}
+                userLocation={userLocation}
+                setUserLocation={setUserLocation}
+                foodList={foodList}
+                setFoodList={setFoodList}
+            />
             <Spacing />
             <Wrapper>
                 <Select onChange={handleSortChange}>
                     <option value="option1">기본순</option>
                     <option value="option2">가까운 순</option>
-                    <option value="option3">테스트 순</option>
                 </Select>
                 <FoodList foodItems={foodList} />
             </Wrapper>

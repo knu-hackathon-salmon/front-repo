@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { FaCamera } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -31,6 +31,24 @@ export default function PostPage() {
 
     const { mutate: postFood } = usePostFood();
     const { mutate: putFood } = usePutFood();
+
+    useEffect(() => {
+        if (type === "update" && prevformData) {
+            setTitle(prevformData.title);
+            setStock(prevformData.stock);
+            setExpiration(prevformData.expiration);
+            setPrice(prevformData.price);
+            setContent(prevformData.content);
+            if (prevformData.images) {
+                const uploadedImages: UploadImage[] = prevformData.images.map((img: string) => ({
+                    file: new File([], img),
+                    thumbnail: img,
+                    type: "image/jpeg",
+                }));
+                setImageFiles(uploadedImages);
+            }
+        }
+    }, [prevformData, type]);
 
     const handleClickFileInput = () => {
         fileInputRef.current?.click();
@@ -103,10 +121,7 @@ export default function PostPage() {
         imageFiles.forEach((image) => {
             formData.append("images", image.file);
         });
-        console.log("formData", formData);
-        formData.forEach((value, key) => {
-            console.log(key, value);
-        });
+
         if (type === "create") {
             postFood(formData, {
                 onSuccess: () => navigate("/"),
@@ -117,7 +132,11 @@ export default function PostPage() {
                 { foodId, formData },
                 {
                     onSuccess: () => navigate(`/detail/${foodId}`),
-                    onError: (error) => console.error("Error:", error),
+                    onError: (error: any) => {
+                        console.error("Error:", error);
+                        const errorMessage = error.response?.data?.message;
+                        alert(errorMessage);
+                    },
                 },
             );
         }
@@ -150,7 +169,7 @@ export default function PostPage() {
                     <InputField
                         type="text"
                         placeholder="제목"
-                        value={type === "create" ? title : prevformData.title}
+                        value={title}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                         required
                     />
@@ -190,7 +209,7 @@ export default function PostPage() {
                     <InputField
                         type="text"
                         placeholder="ex) 냉장보관 30일"
-                        value={type === "create" ? expiration : prevformData.expiration}
+                        value={expiration}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExpiration(e.target.value)}
                         required
                     />
@@ -203,7 +222,7 @@ export default function PostPage() {
                         className="description"
                         type="text"
                         placeholder="상품을 소개해주세요"
-                        value={type === "create" ? content : prevformData.content}
+                        value={content}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
                         required
                     />

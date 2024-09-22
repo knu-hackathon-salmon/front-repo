@@ -18,7 +18,6 @@ export default function MainPage() {
     const navigate = useNavigate();
     if (isLoading) return <p>Loading...</p>;
     if (!foodData || error) return <p>Error loading food data!</p>;
-    console.log(foodData);
 
     const handleCreateFood = () => {
         navigate("/post", {
@@ -59,6 +58,7 @@ const Wrapper = styled.div`
     flex-direction: column;
     gap: 10px;
     margin: 20px 0px;
+    position: relative;
     .emph {
         color: #1ca673;
         font-weight: bolders;
@@ -71,8 +71,8 @@ const Spacing = styled.div`
 `;
 const AddBtn = styled.button`
     position: fixed;
-    bottom: 100px;
-    right: 30px;
+    bottom: 110px;
+    right: 10vw;
     z-index: 1000;
     padding: 8px;
     border: 1px solid#1ca673;

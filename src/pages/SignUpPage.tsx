@@ -70,7 +70,6 @@ export default function SignUpPage() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(coordinates);
         const jsonData =
             type === "shop"
                 ? {
@@ -110,9 +109,7 @@ export default function SignUpPage() {
             {
                 onSuccess: (response: AxiosResponse) => {
                     const newType = response.headers["type"];
-                    console.log("헤더에잇는type", newType);
                     typeSessionStorage.set(newType);
-                    console.log("authSessionStorage", authSessionStorage);
                     navigate("/");
                 },
                 onError: (error) => console.error("Error:", error),
@@ -212,7 +209,7 @@ export default function SignUpPage() {
                             <InputField
                                 className="description"
                                 type="text"
-                                placeholder="상품 소개"
+                                placeholder="소개"
                                 value={productDescription}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setProductDescription(e.target.value)
@@ -304,8 +301,7 @@ const InputField = styled.input`
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-
-    @media screen and (min-width: 400px) {
+    @media screen and (min-width: 375px) {
         width: 75%;
     }
 `;
@@ -322,7 +318,7 @@ const AddressWrapper = styled.div`
     .address {
         width: 100%;
     }
-    @media screen and (min-width: 400px) {
+    @media screen and (min-width: 375px) {
         width: 75%;
     }
 `;
