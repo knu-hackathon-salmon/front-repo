@@ -5,7 +5,7 @@ import MainLayout from "./components/common/MainLayout";
 import { GlobalStyle } from "./globals";
 import ChatPage from "./pages/ChatPage";
 import DetailPage from "./pages/DetailPage";
-// import LoginPage from "./pages/LoginPage";
+import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import MapPage from "./pages/MapPage";
 import MyPage from "./pages/MyPage";
@@ -13,7 +13,8 @@ import PostPage from "./pages/PostPage";
 import ReissuePage from "./pages/ReissuePage";
 import SelectPage from "./pages/SelectPage";
 import SignUpPage from "./pages/SignUpPage";
-import TempPage from "./pages/TempPage";
+
+// import TempPage from "./pages/TempPage";
 
 function App() {
     const protectedRoutes = [
@@ -31,7 +32,7 @@ function App() {
             <GlobalStyle />
             <Routes>
                 <Route path="/" element={<MainLayout />}>
-                    <Route path="/sign-in" element={<TempPage />} />
+                    <Route path="/sign-in" element={<LoginPage />} />
                     <Route path="/reissue" element={<ReissuePage />} />
                     {protectedRoutes.map(({ path, element }) => (
                         <Route key={path} path={path} element={<ProtectedRoute>{element}</ProtectedRoute>} />

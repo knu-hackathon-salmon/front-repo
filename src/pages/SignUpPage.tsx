@@ -11,7 +11,7 @@ import DaumPost from "@/components/features/SignUp/DaumPost";
 import { useGetCoordinates } from "@/api/hooks/useGetCoordinates";
 import { usePostSignup } from "@/api/hooks/usePostSignup";
 
-import { authSessionStorage, typeSessionStorage } from "@/utils/storage";
+import {  typeSessionStorage } from "@/utils/storage";
 
 import { UploadImage, postCode } from "@/types";
 
