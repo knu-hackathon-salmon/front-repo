@@ -10,6 +10,7 @@ import { BASE_URL } from "@/api/instance";
 import { authSessionStorage } from "@/utils/storage";
 
 import { MapItem } from "@/types";
+import { mapList } from "@/types/const";
 import { Select } from "@chakra-ui/react";
 
 interface MapPos {
@@ -50,6 +51,7 @@ export default function MapPage() {
                 }),
             })
                 .then((response) => {
+                    console.log("Response:", response);
                     return response.json();
                 })
                 .then((data) => {
@@ -80,7 +82,7 @@ export default function MapPage() {
                     <option value="option1">기본순</option>
                     <option value="option2">가까운 순</option>
                 </Select>
-                <FoodList foodItems={foodList} />
+                <FoodList foodItems={mapList} />
             </Wrapper>
         </>
     );
