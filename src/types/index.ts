@@ -126,3 +126,14 @@ export interface UserInfo {
 export interface GetUserInfoResponse {
     data: UserInfo;
 }
+export interface ChatItemData {
+    chatId: number;
+    foodId: number;
+    foodTitle: string;
+    foodName: string;
+    opponentName: string;
+    imageUrl: string;
+}
+export interface GetChatListResponse {
+    data: ChatItemData;
+}

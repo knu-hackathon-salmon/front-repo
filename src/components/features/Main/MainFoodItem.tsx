@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import { Link } from "react-router-dom";
 
@@ -5,17 +6,39 @@ import styled from "styled-components";
 
 import { Text } from "@/components/common/Text";
 
+import { usePostWish } from "@/api/hooks/usePostWish";
+
 import { useAuth } from "@/provider/Auth";
 import { MainItem } from "@/types";
 
 export function MainFoodItem({ item }: { item: MainItem }) {
     const type = useAuth()?.type;
+    const [isWish, setIsWish] = useState(item.wish);
+    const { mutate: postWish } = usePostWish();
+
+    const handleWish = (event: React.MouseEvent, foodId: number) => {
+        event.preventDefault();
+        event.stopPropagation();
+        postWish(foodId, {
+            onSuccess: () => {
+                setIsWish((prev) => !prev);
+                alert("찜 등록 완료!");
+            },
+            onError: (error) => {
+                console.error("Error:", error);
+            },
+        });
+    };
     return (
         <Wrapper to={`/detail/${item.foodId}`}>
             <ImageContainer>
-                {/*위시 누르기 api 필요 */}
-                {type === "CUSTOMER" ? <IoMdHeartEmpty size={24} /> : null}
-                {/* <IoMdHeartEmpty size={24} /> */}
+                {type === "CUSTOMER" ? (
+                    isWish ? (
+                        <IoMdHeart size={24} onClick={(event) => handleWish(event, item.foodId)} />
+                    ) : (
+                        <IoMdHeartEmpty size={24} onClick={(event) => handleWish(event, item.foodId)} />
+                    )
+                ) : null}
                 <Image src={item.foodImageUrl} alt={item.title} />
                 <TitleContainer>
                     <ShopImage src={item.shopImageUrl} alt={item.title} />
@@ -29,7 +52,6 @@ export function MainFoodItem({ item }: { item: MainItem }) {
                     <Text size="l" weight="bold">
                         {item.title}
                     </Text>
-
                     <Text className="address" size="xs" weight="normal" variant="gray">
                         {item.roadAddress}
                     </Text>
@@ -78,7 +100,7 @@ const ImageContainer = styled.div`
         position: absolute;
         top: 10px;
         right: 10px;
-        z-index: 100;
+        z-index: 10000;
         align-items: end;
     }
 `;
@@ -110,7 +132,6 @@ const InfoWrapper = styled.div`
     padding: 10px;
     display: flex;
     justify-content: space-between;
-    flex-direction: row;
     align-items: end;
     .address {
         text-overflow: ellipsis;

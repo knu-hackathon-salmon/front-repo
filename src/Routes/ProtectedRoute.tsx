@@ -6,7 +6,6 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
     const auth = authSessionStorage.get();
 
     if (!auth) {
-        console.log("authInfo", auth);
         return <Navigate to="/sign-in" />;
     }
 

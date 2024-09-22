@@ -8,61 +8,69 @@ import { MapItem } from "@/types";
 
 export function FoodItem({ item }: { item: MapItem }) {
     return (
-        <Wrapper to="/detail/1">
+        <Wrapper to={`/detail/${item.id}`}>
             <FoodImage src={item.imageUrl} alt={item.title} />
             <InfoWrapper>
                 <Info>
                     <Text size="l" weight="bold">
                         {item.title}
                     </Text>
-                    <Text size="s" weight="normal">
-                        {item.storeName}
-                    </Text>
-                    <Text size="xs" weight="normal" variant="gray">
-                        {item.roadAddress}
+                    <Text className="price" size="s" weight="bold">
+                        {item.price}원
                     </Text>
                 </Info>
-                <Price>{item.price}원</Price>
+                <Text size="s" weight="normal">
+                    {item.storeName}
+                </Text>
+                <Text className="address" size="xs" weight="normal" variant="gray">
+                    {item.roadAddress}
+                </Text>
             </InfoWrapper>
         </Wrapper>
     );
 }
 
 const Wrapper = styled(Link)`
-    width: 100%;
-    height: auto;
+    width: auto;
+    height: 100px;
     display: flex;
     flex-direction: row;
-    overflow: hidden;
-    scroll-snap-align: center;
     flex-shrink: 0;
-    border-radius: 10px;
     text-decoration: none;
     color: black;
-    border: 1px solid #1ca673; /* 테두리 강조 */
 `;
 
 const FoodImage = styled.img`
-    width: 80px; /* 이미지 크기 고정 */
-    height: 80px; /* 이미지 높이 고정 */
+    width: 80px;
+    height: 80px;
     object-fit: cover;
-    border-radius: 10px;
 `;
 
 const InfoWrapper = styled.div`
     flex: 1;
-    padding: 10px;
+    width: 70%;
+    padding-left: 20px;
     display: flex;
-    justify-content: space-between;
     flex-direction: column;
+
+    span {
+        width: fit-content;
+    }
+    .address {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 80%;
+    }
+    .price {
+        text-align: end;
+        padding-right: 14px;
+        min-width: 30px;
+    }
 `;
 
 const Info = styled.div`
     display: flex;
-    flex-direction: column;
-    gap: 5px; /* 요소 간 간격 추가 */
-`;
-
-const Price = styled.div`
-    align-self: flex-end; /* 가격을 오른쪽 끝에 배치 */
+    justify-content: space-between;
+    gap: 5px;
 `;

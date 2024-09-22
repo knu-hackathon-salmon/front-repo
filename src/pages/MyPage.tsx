@@ -3,14 +3,16 @@ import { useState } from "react";
 import { styled } from "styled-components";
 
 import { Text } from "@/components/common/Text";
+import { ChatList } from "@/components/features/Chat/ChatList";
 import { FoodList } from "@/components/features/Map/FoodList";
 
 import { useGetUserInfo } from "@/api/hooks/useGeUserInfo";
+import { useGetChatList } from "@/api/hooks/useGetChatList";
 import { useGetTrade } from "@/api/hooks/useGetTrade";
 import { useGetWishList } from "@/api/hooks/useGetWishList";
 
 import { useAuth } from "@/provider/Auth";
-import { TradeItem, WishItem } from "@/types";
+import { ChatItemData, TradeItem, WishItem } from "@/types";
 
 interface TabButtonProps {
     isActive: boolean;
@@ -25,11 +27,12 @@ export default function MyPage() {
     const { data: tradeListData } = type === "SHOP" ? useGetTrade() : { data: undefined };
     const { data: userData } = useGetUserInfo(userType);
     const { data: wishListData } = type === "CUSTOMER" ? useGetWishList() : { data: undefined };
+    const { data: chatData } = useGetChatList();
 
     const tradeList: TradeItem[] = (tradeListData?.data || []) as TradeItem[];
     const wishList: WishItem[] = (wishListData?.data || []) as WishItem[];
+    const chatList: ChatItemData[] = (chatData?.data || []) as ChatItemData[];
     const userInfo = userData?.data;
-    //chatList 추가 필요
 
     const renderContent = () => {
         if (activeTab === "first" && type === "SHOP") {
@@ -37,11 +40,10 @@ export default function MyPage() {
         } else if (activeTab === "wish" && type === "CUSTOMER") {
             return wishList.length > 0 ? <FoodList foodItems={wishList} /> : <NoData>찜 목록이 없습니다.</NoData>;
         } else if (activeTab === "chat") {
-            return <NoData>채팅 목록이 없습니다.</NoData>;
+            return chatList.length > 0 ? <ChatList chatItems={chatList} /> : <NoData>채팅 목록이 없습니다.</NoData>;
         }
         return null;
     };
-    console.log(tradeList[0]);
     return (
         <>
             <InfoWrapper>
